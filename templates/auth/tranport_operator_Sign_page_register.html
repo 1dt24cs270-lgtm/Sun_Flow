@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HaulPool | Transport Operator Portal & Fleet Registration</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-dark: #070c18;
+      --bg-surface: #0e1628;
+      --bg-card: rgba(17, 24, 42, 0.94);
+      --bg-card-hover: rgba(24, 34, 60, 0.98);
+      --bg-input: #090e1a;
+      --border-color: rgba(245, 158, 11, 0.25);
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --primary: #f59e0b;
+      --primary-dark: #d97706;
+      --primary-glow: rgba(245, 158, 11, 0.35);
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 15% 15%, #142344 0%, #070c18 50%, #030610 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* NON-STICKY GLOBAL HEADER */
+    header {
+      position: static;
+      width: 100%;
+      padding: 22px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(11, 17, 32, 0.98);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 8px var(--primary-glow));
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .header-nav a:hover {
+      color: var(--primary);
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid var(--border-color);
+      padding: 7px 16px;
+      border-radius: 30px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fde68a;
+    }
+
+    /* MAIN AUTH WRAPPER */
+    .auth-wrapper {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 40px 6%;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* LEFT COLUMN: HERO INFORMATION & BENEFITS */
+    .auth-info-pane {
+      background: linear-gradient(135deg, rgba(20, 31, 56, 0.95), rgba(11, 17, 32, 0.98));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      padding: 5px 14px;
+      border-radius: 30px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-info-pane h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      line-height: 1.18;
+      color: #ffffff;
+    }
+
+    .auth-info-pane h1 span {
+      background: linear-gradient(135deg, #fde68a, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-info-pane p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .benefit-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .benefit-text h4 {
+      font-size: 0.95rem;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+
+    .benefit-text p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .auth-guarantee-box {
+      background: rgba(9, 14, 26, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .auth-guarantee-box i {
+      font-size: 2rem;
+      color: var(--accent-green);
+    }
+
+    /* RIGHT COLUMN: INTERACTIVE AUTH FORM CARD */
+    .auth-form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    /* SWITCHER TAB (REGISTER VS SIGN IN) */
+    .tab-switcher {
+      display: flex;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: 26px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #070c18;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    /* FORM ELEMENTS */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group label span.req {
+      color: var(--primary);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap i.prefix-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px 12px 42px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+      background: #0e1526;
+    }
+
+    .form-control.no-icon {
+      padding-left: 14px;
+    }
+
+    .toggle-pw-btn {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .toggle-pw-btn:hover {
+      color: var(--text-main);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* PASSWORD STRENGTH GAUGE */
+    .pw-meter {
+      height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .pw-meter-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    /* TRUCK & CONTAINER TYPE MULTI-SELECTOR TILES */
+    .truck-selection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .truck-option-tile {
+      background: rgba(9, 14, 26, 0.85);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .truck-option-tile:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .truck-option-tile.selected {
+      border-color: var(--primary);
+      background: rgba(245, 158, 11, 0.12);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+    }
+
+    .truck-option-tile i {
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+
+    .truck-option-tile span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .truck-option-tile small {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+    }
+
+    /* SUBMIT BUTTON */
+    .btn-submit-auth {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #070c18;
+      border: none;
+      padding: 15px;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+      box-shadow: 0 4px 18px var(--primary-glow);
+      margin-top: 10px;
+    }
+
+    .btn-submit-auth:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 26px rgba(245, 158, 11, 0.55);
+    }
+
+    .auth-terms-note {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .auth-terms-note a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #141f38;
+      color: #fde68a;
+      border: 1px solid var(--primary);
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* DETAILED LOGISTICS FOOTER */
+    footer {
+      background: #030712;
+      border-top: 1px solid var(--border-color);
+      padding: 60px 6% 30px;
+      color: #94a3b8;
+      margin-top: 50px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-grid h3 {
+      color: #fde68a;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .footer-grid a {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      display: block;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .footer-grid a:hover {
+      color: var(--primary);
+    }
+
+    footer hr {
+      border: none;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1080px) {
+      .auth-wrapper { grid-template-columns: 1fr; }
+      .truck-selection-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 650px) {
+      .truck-selection-grid { grid-template-columns: repeat(2, 1fr); }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .header-nav { display: none; }
+      .auth-info-pane h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo" onclick="window.location.reload()">
+      <i class="fa-solid fa-truck-ramp-box"></i>
+      <span>HaulPool <small style="font-size: 0.65rem; color: var(--primary); letter-spacing: 1px; font-weight: 700; text-transform: uppercase;">Operator Authentication</small></span>
+    </div>
+
+    <nav class="header-nav">
+      <a href="customer.html"><i class="fa-solid fa-boxes-packing"></i> Customer Portal</a>
+      <a href="operator-post-route.html"><i class="fa-solid fa-route"></i> Route Scheduler</a>
+      <a href="operator-analytics.html"><i class="fa-solid fa-chart-line"></i> Fleet Analytics</a>
+    </nav>
+
+    <div class="header-badge">
+      <i class="fa-solid fa-shield-halved"></i> FMCSA &amp; DOT Standard Verified
+    </div>
+  </header>
+
+  <div class="auth-wrapper">
+
+    <aside class="auth-info-pane">
+      <div class="hero-tag">
+        <i class="fa-solid fa-gas-pump"></i> Monetize Empty Backhauls
+      </div>
+
+      <h1>Join 4,200+ Fleets <span>Eliminating Deadhead Miles</span></h1>
+
+      <p>
+        Register your commercial transport authority on HaulPool. Set your scheduled return corridors, intercept verified freight demands at highway waypoints, and get paid directly to your fleet fuel card with automated escrow protection.
+      </p>
+
+      <div class="benefit-item">
+        <div class="benefit-icon"><i class="fa-solid fa-bolt"></i></div>
+        <div class="benefit-text">
+          <h4>Zero Detour Strain</h4>
+          <p>Accept cargo matching your exact corridor coordinates and highway exits without detour delays.</p>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="benefit-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <div class="benefit-text">
+          <h4>Automated Proof-of-Delivery Payout</h4>
+          <p>Instant digital e-BOL release with guaranteed freight payments directly deposited upon terminal check-in.</p>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="benefit-icon"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="benefit-text">
+          <h4>Arbitrage Yield Analytics</h4>
+          <p>Real-time visual reports tracking fuel offset margins, load factors, and profitable multi-stop corridors.</p>
+        </div>
+      </div>
+
+      <div class="auth-guarantee-box">
+        <i class="fa-solid fa-shield-check"></i>
+        <div>
+          <strong style="color:#ffffff; display:block; font-size:0.88rem;">$250,000 Cargo Protection Standard</strong>
+          Every booked parcel and pallet is backed by verified commercial transit insurance.
+        </div>
+      </div>
+    </aside>
+
+    <main class="auth-form-card">
+
+      <div class="tab-switcher">
+        <button class="tab-btn active" id="tabRegister" onclick="switchAuthMode('register')">
+          <i class="fa-solid fa-truck-field"></i> Fleet Registration
+        </button>
+        <button class="tab-btn" id="tabSignIn" onclick="switchAuthMode('signin')">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Operator Sign In
+        </button>
+      </div>
+
+      <form id="operatorAuthForm" onsubmit="handleOperatorAuth(event)">
+
+        <div class="form-group" id="groupCompanyName">
+          <label>
+            1. Company / Operator Legal Name
+            <span class="req">*</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-building prefix-icon"></i>
+            <input type="text" id="opLegalName" class="form-control" placeholder="e.g. Apex Freight Logistics Corp" required />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>
+              2. Business Dispatch Email
+              <span class="req">*</span>
+            </label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-envelope prefix-icon"></i>
+              <input type="email" id="opEmail" class="form-control" placeholder="dispatch@carrierfleet.com" required />
+            </div>
+          </div>
+
+          <div class="form-group" id="groupPhone">
+            <label>Dispatch Contact Phone</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-phone prefix-icon"></i>
+              <input type="tel" id="opPhone" class="form-control" placeholder="+1 (555) 019-2831" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" id="groupAddress">
+          <label>
+            3. Primary Terminal / Yard Address
+            <span class="req">*</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-location-dot prefix-icon"></i>
+            <input type="text" id="opStreetAddress" class="form-control" placeholder="Street Address / Logistics Park / Terminal Bay" required />
+          </div>
+
+          <div class="form-grid-2" style="margin-top: 8px;">
+            <input type="text" id="opCity" class="form-control no-icon" placeholder="City (e.g. Dallas / Mumbai)" required />
+            <input type="text" id="opZip" class="form-control no-icon" placeholder="State &amp; Postal / Zip Code" required />
+          </div>
+        </div>
+
+        <div class="form-group" id="groupTruckTypes">
+          <label>
+            4. Trucks &amp; Container Types in Operation
+            <span style="font-size:0.7rem; color:var(--primary); font-weight:500;">(Select all that apply: <span id="selectedCountBadge">1</span> selected)</span>
+          </label>
+          <div class="truck-selection-grid">
+            
+            <div class="truck-option-tile selected" onclick="toggleTruckSelection(this, '53 Dry Van')">
+              <i class="fa-solid fa-truck"></i>
+              <span>53' Dry Van</span>
+              <small>Ambient Pallets</small>
+            </div>
+
+            <div class="truck-option-tile" onclick="toggleTruckSelection(this, 'Reefer Cold Chain')">
+              <i class="fa-solid fa-snowflake" style="color:var(--accent-cyan);"></i>
+              <span>Reefer Cold-Chain</span>
+              <small>Temp Controlled</small>
+            </div>
+
+            <div class="truck-option-tile" onclick="toggleTruckSelection(this, 'Flatbed Stepdeck')">
+              <i class="fa-solid fa-trailer"></i>
+              <span>Flatbed / Stepdeck</span>
+              <small>Heavy / Industrial</small>
+            </div>
+
+            <div class="truck-option-tile" onclick="toggleTruckSelection(this, 'High-Roof Sprinter')">
+              <i class="fa-solid fa-van-shuttle" style="color:var(--accent-green);"></i>
+              <span>High-Roof Sprinter</span>
+              <small>Parcels &amp; Express</small>
+            </div>
+
+            <div class="truck-option-tile" onclick="toggleTruckSelection(this, '32 Multi-Axle Container')">
+              <i class="fa-solid fa-truck-moving"></i>
+              <span>24'-32' Multi-Axle</span>
+              <small>Heavy Cargo Container</small>
+            </div>
+
+            <div class="truck-option-tile" onclick="toggleTruckSelection(this, 'ISO Tanker')">
+              <i class="fa-solid fa-boxes-stacked" style="color:var(--primary);"></i>
+              <span>ISO Liquid Tanker</span>
+              <small>Hazmat / Liquid Drums</small>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            5. Secure Password
+            <span class="req">*</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock prefix-icon"></i>
+            <input type="password" id="opPassword" class="form-control" placeholder="Create a secure 8+ character password" oninput="checkPasswordStrength(this.value)" required />
+            <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="pwEyeIcon"></i></button>
+          </div>
+          <div class="pw-meter" id="pwMeterWrap">
+            <div class="pw-meter-fill" id="pwMeterFill"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit-auth" id="btnAuthSubmit">
+          <i class="fa-solid fa-shield-check"></i> Complete Fleet Registration &amp; Launch Studio
+        </button>
+
+        <p class="auth-terms-note">
+          By registering, you confirm compliance with national transport laws, verified commercial cargo insurance, and agree to the <a href="#">Carrier Service Terms</a>.
+        </p>
+      </form>
+    </main>
+
+  </div>
+
+  <div class="toast" id="authToast">
+    <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i>
+    <span id="toastMsg">Fleet successfully registered! Redirecting to Operator Studio...</span>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom: 14px;">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <span>HaulPool</span>
+        </div>
+        <p>Carrier Yield Optimization Network. Connecting backhaul deadhead runs with high-density waypoint shippers to maximize route profitability.</p>
+      </div>
+
+      <div>
+        <h3>Operator Publishing</h3>
+        <a href="operator-post-route.html">Multi-Stop Route Builder</a>
+        <a href="operator.html">Active Hosted Corridors</a>
+        <a href="operator-analytics.html">Fleet Arbitrage Analytics</a>
+        <a href="#">Detour Compensation Matrix</a>
+      </div>
+
+      <div>
+        <h3>Carrier Escrow &amp; Payouts</h3>
+        <a href="#">Instant Fuel Card Release</a>
+        <a href="#">Proof-of-Delivery Auto Payout</a>
+        <a href="#">Detour Detention Invoicing</a>
+        <a href="#">Cargo Liability Coverage</a>
+      </div>
+
+      <div>
+        <h3>Compliance &amp; Safety</h3>
+        <a href="#">FMCSA / DOT Telematics Link</a>
+        <a href="#">Automated e-BOL Generation</a>
+        <a href="#">24/7 Dispatch Control Room</a>
+        <a href="#">Terms of Route Hosting</a>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 HaulPool Technologies Inc. Carrier Authentication &bull; Verified Fleet Network</div>
+      <div>Zero Deadhead Carbon Reduction Standard</div>
+    </div>
+  </footer>
+
+  <script>
+    let currentAuthMode = 'register';
+    let selectedTruckTypes = ['53 Dry Van'];
+
+    // 1. SWITCH BETWEEN REGISTRATION AND SIGN-IN MODES
+    function switchAuthMode(mode) {
+      currentAuthMode = mode;
+      const tabReg = document.getElementById('tabRegister');
+      const tabSign = document.getElementById('tabSignIn');
+      const groupCompany = document.getElementById('groupCompanyName');
+      const groupPhone = document.getElementById('groupPhone');
+      const groupAddress = document.getElementById('groupAddress');
+      const groupTrucks = document.getElementById('groupTruckTypes');
+      const pwMeter = document.getElementById('pwMeterWrap');
+      const submitBtn = document.getElementById('btnAuthSubmit');
+
+      if (mode === 'signin') {
+        tabSign.classList.add('active');
+        tabReg.classList.remove('active');
+
+        // Hide registration-only fields smoothly
+        groupCompany.style.display = 'none';
+        groupPhone.style.display = 'none';
+        groupAddress.style.display = 'none';
+        groupTrucks.style.display = 'none';
+        pwMeter.style.display = 'none';
+
+        document.getElementById('opLegalName').removeAttribute('required');
+        document.getElementById('opStreetAddress').removeAttribute('required');
+        document.getElementById('opCity').removeAttribute('required');
+        document.getElementById('opZip').removeAttribute('required');
+
+        submitBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Operator Studio';
+      } else {
+        tabReg.classList.add('active');
+        tabSign.classList.remove('active');
+
+        // Show all registration fields
+        groupCompany.style.display = 'flex';
+        groupPhone.style.display = 'flex';
+        groupAddress.style.display = 'flex';
+        groupTrucks.style.display = 'flex';
+        pwMeter.style.display = 'block';
+
+        document.getElementById('opLegalName').setAttribute('required', 'true');
+        document.getElementById('opStreetAddress').setAttribute('required', 'true');
+        document.getElementById('opCity').setAttribute('required', 'true');
+        document.getElementById('opZip').setAttribute('required', 'true');
+
+        submitBtn.innerHTML = '<i class="fa-solid fa-shield-check"></i> Complete Fleet Registration &amp; Launch Studio';
+      }
+    }
+
+    // 2. TOGGLE TRUCK & CONTAINER SELECTION
+    function toggleTruckSelection(tile, typeName) {
+      if (tile.classList.contains('selected')) {
+        // Prevent deselecting everything
+        if (selectedTruckTypes.length > 1) {
+          tile.classList.remove('selected');
+          selectedTruckTypes = selectedTruckTypes.filter(t => t !== typeName);
+        } else {
+          showToast('At least one container/truck type must remain selected.');
+        }
+      } else {
+        tile.classList.add('selected');
+        selectedTruckTypes.push(typeName);
+      }
+      document.getElementById('selectedCountBadge').textContent = selectedTruckTypes.length;
+    }
+
+    // 3. PASSWORD VISIBILITY TOGGLE
+    function togglePasswordVisibility() {
+      const pwField = document.getElementById('opPassword');
+      const eyeIcon = document.getElementById('pwEyeIcon');
+      if (pwField.type === 'password') {
+        pwField.type = 'text';
+        eyeIcon.className = 'fa-solid fa-eye-slash';
+      } else {
+        pwField.type = 'password';
+        eyeIcon.className = 'fa-solid fa-eye';
+      }
+    }
+
+    // 4. PASSWORD STRENGTH CALCULATION
+    function checkPasswordStrength(val) {
+      const fill = document.getElementById('pwMeterFill');
+      let strength = 0;
+      if (val.length >= 8) strength += 30;
+      if (/[A-Z]/.test(val)) strength += 25;
+      if (/[0-9]/.test(val)) strength += 25;
+      if (/[^A-Za-z0-9]/.test(val)) strength += 20;
+
+      fill.style.width = `${strength}%`;
+      if (strength <= 30) {
+        fill.style.background = 'var(--accent-red)';
+      } else if (strength <= 75) {
+        fill.style.background = 'var(--primary)';
+      } else {
+        fill.style.background = 'var(--accent-green)';
+      }
+    }
+
+    // 5. HANDLE FORM SUBMISSION & ROUTING
+    async function handleOperatorAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('opEmail').value.trim();
+      const endpoint = currentAuthMode === 'register'
+        ? '{{ url_for("auth.operator_signup") }}'
+        : '{{ url_for("auth.operator_signin") }}';
+      const payload = { email, password: document.getElementById('opPassword').value };
+
+      if (currentAuthMode === 'register') {
+        payload.name = document.getElementById('opLegalName').value.trim();
+        payload.phone = document.getElementById('opPhone').value.trim();
+        payload.address = `${document.getElementById('opStreetAddress').value.trim()}, ${document.getElementById('opCity').value.trim()}, ${document.getElementById('opZip').value.trim()}`;
+        payload.company = document.getElementById('opLegalName').value.trim();
+        payload.truck_types = selectedTruckTypes;
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || 'Authentication failed');
+        showToast(result.message);
+        setTimeout(() => { window.location.href = result.redirect || '{{ url_for("operator.dashboard") }}'; }, 700);
+      } catch (error) {
+        showToast(error.message);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('authToast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3800);
+    }
+  </script>
+</body>
+</html>

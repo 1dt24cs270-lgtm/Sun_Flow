@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HaulPool | Customer Access & Registration</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-dark: #070c18;
+      --bg-surface: #0e1628;
+      --bg-card: rgba(17, 24, 42, 0.92);
+      --bg-input: #090e1a;
+      --border-color: rgba(245, 158, 11, 0.25);
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --primary: #f59e0b;
+      --primary-dark: #d97706;
+      --primary-glow: rgba(245, 158, 11, 0.35);
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 15% 15%, #142344 0%, #070c18 50%, #030610 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* NON-STICKY GLOBAL HEADER */
+    header {
+      position: static;
+      width: 100%;
+      padding: 22px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(11, 17, 32, 0.98);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 8px var(--primary-glow));
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .header-nav a:hover {
+      color: var(--primary);
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 7px 16px;
+      border-radius: 30px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .auth-container {
+      max-width: 520px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 38px 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .auth-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .auth-header h1 span {
+      background: linear-gradient(135deg, #fde68a, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-header p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* TAB SWITCHER */
+    .tab-switcher {
+      display: flex;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #070c18;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    /* FORM STYLES */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group label span.req {
+      color: var(--primary);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap i.prefix-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px 12px 42px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+      background: #0e1526;
+    }
+
+    .form-control.no-icon {
+      padding-left: 14px;
+    }
+
+    .toggle-pw-btn {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .toggle-pw-btn:hover {
+      color: var(--text-main);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* PASSWORD STRENGTH GAUGE */
+    .pw-meter {
+      height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .pw-meter-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    /* SUBMIT BUTTON */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #070c18;
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      font-size: 0.98rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+      box-shadow: 0 4px 18px var(--primary-glow);
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(245, 158, 11, 0.5);
+    }
+
+    .auth-footer-help {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 20px;
+    }
+
+    .auth-footer-help a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #141f38;
+      color: #fde68a;
+      border: 1px solid var(--primary);
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* DETAILED LOGISTICS FOOTER */
+    footer {
+      background: #030712;
+      border-top: 1px solid var(--border-color);
+      padding: 60px 6% 30px;
+      color: #94a3b8;
+      margin-top: 60px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-grid h3 {
+      color: #fde68a;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .footer-grid a {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      display: block;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .footer-grid a:hover {
+      color: var(--primary);
+    }
+
+    footer hr {
+      border: none;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .header-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo" onclick="window.location.reload()">
+      <i class="fa-solid fa-truck-ramp-box"></i>
+      <span>HaulPool <small style="font-size: 0.65rem; color: var(--primary); letter-spacing: 1px; font-weight: 700; text-transform: uppercase;">Customer Portal</small></span>
+    </div>
+
+    <nav class="header-nav">
+      <a href="customer.html"><i class="fa-solid fa-route"></i> Live Corridors</a>
+      <a href="{{ url_for('auth.operator_signin') }}"><i class="fa-solid fa-truck-front"></i> Operator Login</a>
+      <a href="#"><i class="fa-solid fa-headset"></i> Support Desk</a>
+    </nav>
+
+    <div class="header-badge">
+      <i class="fa-solid fa-shield-halved"></i> Escrow Shield Verified
+    </div>
+  </header>
+
+  <div class="auth-container">
+    <div class="auth-card">
+
+      <div class="auth-header">
+        <h1 id="authTitle">Customer <span>Sign In</span></h1>
+        <p id="authSubtitle">Access return corridors, book cargo space, and track deliveries</p>
+      </div>
+
+      <div class="tab-switcher">
+        <button class="tab-btn active" id="btnTabSignIn" onclick="setMode('signin')">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </button>
+        <button class="tab-btn" id="btnTabRegister" onclick="setMode('register')">
+          <i class="fa-solid fa-user-plus"></i> Register
+        </button>
+      </div>
+
+      <form id="customerForm" onsubmit="handleAuth(event)">
+        
+        <div class="form-group" id="nameGroup" style="display: none;">
+          <label>
+            Full Name / Business Name
+            <span class="req">*</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-user prefix-icon"></i>
+            <input type="text" id="custName" class="form-control" placeholder="e.g. John Doe / Apex Retailers" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            Email Address
+            <span class="req">*</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-envelope prefix-icon"></i>
+            <input type="email" id="custEmail" class="form-control" placeholder="shipper@business.com" required />
+          </div>
+        </div>
+
+        <div class="form-group" id="phoneGroup" style="display: none;">
+          <label>Phone Number (for SMS Tracking)</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-phone prefix-icon"></i>
+            <input type="tel" id="custPhone" class="form-control" placeholder="+1 (555) 019-2831" />
+          </div>
+        </div>
+
+        <div class="form-group" id="addressGroup" style="display: none;">
+          <label>Primary Delivery / Pickup Address</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-location-dot prefix-icon"></i>
+            <input type="text" id="custAddress" class="form-control" placeholder="Street Address / Warehouse Bay" />
+          </div>
+          <div class="form-grid-2" style="margin-top: 8px;">
+            <input type="text" id="custCity" class="form-control no-icon" placeholder="City (e.g. Dallas, Mumbai)" />
+            <input type="text" id="custZip" class="form-control no-icon" placeholder="State &amp; Postal / Zip" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            Password
+            <span class="req">*</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock prefix-icon"></i>
+            <input type="password" id="custPassword" class="form-control" placeholder="Enter your password" oninput="checkStrength(this.value)" required />
+            <button type="button" class="toggle-pw-btn" onclick="togglePassword()"><i class="fa-solid fa-eye" id="pwIcon"></i></button>
+          </div>
+          <div class="pw-meter" id="pwMeter" style="display: none;">
+            <div class="pw-meter-fill" id="pwFill"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Customer Hub
+        </button>
+
+        <div class="auth-footer-help" id="footerHelp">
+          Don't have an account yet? <a href="javascript:void(0)" onclick="setMode('register')">Register here</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="authToast">
+    <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i>
+    <span id="toastMsg">Authentication successful!</span>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom: 14px;">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <span>HaulPool</span>
+        </div>
+        <p>Customer Freight Liquidity Portal. Connecting manufacturers, merchants, and parcel shippers directly to return transport schedules.</p>
+      </div>
+
+      <div>
+        <h3>Customer Hub</h3>
+        <a href="customer.html">Live Corridor Search</a>
+        <a href="customer-history.html">Past Shipment History</a>
+        <a href="#">Midway Waypoint Intercepts</a>
+        <a href="#">Deadhead Fuel Arbitrage Index</a>
+      </div>
+
+      <div>
+        <h3>Escrow &amp; Security</h3>
+        <a href="#">Escrow Protection Shield</a>
+        <a href="#">Electronic Bill of Lading (e-BOL)</a>
+        <a href="#">$250,000 Cargo Insurance</a>
+        <a href="#">Dispute Resolution Desk</a>
+      </div>
+
+      <div>
+        <h3>Compliance</h3>
+        <a href="#">Carrier DOT Verification</a>
+        <a href="#">Real-Time GPS Telematics</a>
+        <a href="#">24/7 Dispatch Control</a>
+        <a href="#">Terms of Carriage</a>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 HaulPool Technologies Inc. Customer Authentication Portal</div>
+      <div>Zero Deadhead Carbon Initiative &bull; Verified Transport Network</div>
+    </div>
+  </footer>
+
+  <script>
+    let currentMode = 'signin';
+
+    // 1. SWITCH BETWEEN SIGN IN & REGISTER
+    function setMode(mode) {
+      currentMode = mode;
+      const tabSignIn = document.getElementById('btnTabSignIn');
+      const tabRegister = document.getElementById('btnTabRegister');
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const nameGroup = document.getElementById('nameGroup');
+      const phoneGroup = document.getElementById('phoneGroup');
+      const addressGroup = document.getElementById('addressGroup');
+      const pwMeter = document.getElementById('pwMeter');
+      const submitBtn = document.getElementById('submitBtn');
+      const footerHelp = document.getElementById('footerHelp');
+
+      const custName = document.getElementById('custName');
+
+      if (mode === 'register') {
+        tabRegister.classList.add('active');
+        tabSignIn.classList.remove('active');
+
+        title.innerHTML = 'Customer <span>Registration</span>';
+        subtitle.textContent = 'Create an account to book deadhead cargo and track manifests';
+
+        nameGroup.style.display = 'flex';
+        phoneGroup.style.display = 'flex';
+        addressGroup.style.display = 'flex';
+        pwMeter.style.display = 'block';
+
+        custName.setAttribute('required', 'true');
+
+        submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Customer Account';
+        footerHelp.innerHTML = 'Already have an account? <a href="javascript:void(0)" onclick="setMode(\'signin\')">Sign In here</a>';
+      } else {
+        tabSignIn.classList.add('active');
+        tabRegister.classList.remove('active');
+
+        title.innerHTML = 'Customer <span>Sign In</span>';
+        subtitle.textContent = 'Access return corridors, book cargo space, and track deliveries';
+
+        nameGroup.style.display = 'none';
+        phoneGroup.style.display = 'none';
+        addressGroup.style.display = 'none';
+        pwMeter.style.display = 'none';
+
+        custName.removeAttribute('required');
+
+        submitBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Customer Hub';
+        footerHelp.innerHTML = 'Don\'t have an account yet? <a href="javascript:void(0)" onclick="setMode(\'register\')">Register here</a>';
+      }
+    }
+
+    // 2. PASSWORD VISIBILITY TOGGLE
+    function togglePassword() {
+      const pw = document.getElementById('custPassword');
+      const icon = document.getElementById('pwIcon');
+      if (pw.type === 'password') {
+        pw.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        pw.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    }
+
+    // 3. PASSWORD STRENGTH BAR
+    function checkStrength(val) {
+      if (currentMode !== 'register') return;
+      const fill = document.getElementById('pwFill');
+      let strength = 0;
+      if (val.length >= 8) strength += 35;
+      if (/[A-Z]/.test(val)) strength += 25;
+      if (/[0-9]/.test(val)) strength += 20;
+      if (/[^A-Za-z0-9]/.test(val)) strength += 20;
+
+      fill.style.width = `${strength}%`;
+      if (strength <= 35) {
+        fill.style.background = 'var(--accent-red)';
+      } else if (strength <= 75) {
+        fill.style.background = 'var(--primary)';
+      } else {
+        fill.style.background = 'var(--accent-green)';
+      }
+    }
+
+    // 4. SUBMIT AND REDIRECT
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('custEmail').value.trim();
+      const endpoint = currentMode === 'register'
+        ? '{{ url_for("auth.customer_signup") }}'
+        : '{{ url_for("auth.customer_signin") }}';
+      const payload = { email, password: document.getElementById('custPassword').value };
+
+      if (currentMode === 'register') {
+        payload.name = document.getElementById('custName').value.trim();
+        payload.phone = document.getElementById('custPhone').value.trim();
+        payload.address = document.getElementById('custAddress').value.trim();
+        payload.company = '';
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || 'Authentication failed');
+        showToast(result.message);
+        setTimeout(() => { window.location.href = result.redirect || '{{ url_for("customer.dashboard") }}'; }, 700);
+      } catch (error) {
+        showToast(error.message);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('authToast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>

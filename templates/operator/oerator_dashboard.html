@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HaulPool · Operator Terminal</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            background: radial-gradient(circle at 20% 10%, #0d1424, #070b14 90%);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        a { text-decoration: none; color: inherit; }
+        section { padding: 40px 8%; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* header */
+        header {
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 163, 89, 0.25);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 50;
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .logo i { color: #d4a359; font-size: 1.5rem; }
+        nav { display: flex; gap: 24px; font-weight: 600; color: #94a3b8; align-items: center; }
+        nav a { transition: 0.2s; padding: 4px 10px; border-radius: 30px; }
+        nav a:hover { color: #f3e5ca; background: rgba(212, 163, 89, 0.12); }
+        nav a.active { color: #f3e5ca; background: rgba(212, 163, 89, 0.15); border: 1px solid rgba(212, 163, 89, 0.2); }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .btn {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+        }
+        .btn-outline { border: 1px solid rgba(212, 163, 89, 0.4); color: #f3e5ca; background: rgba(20,27,45,0.5); }
+        .btn-outline:hover { background: rgba(212, 163, 89, 0.15); border-color: #d4a359; transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(145deg, #d4a359, #b88232); color: #0a0e1a; box-shadow: 0 6px 16px rgba(212, 163, 89, 0.3); }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 28px rgba(212, 163, 89, 0.5); }
+        .btn-success { background: linear-gradient(145deg, #10b981, #059669); color: #fff; }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+        .btn-danger { background: linear-gradient(145deg, #ef4444, #dc2626); color: #fff; }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,68,68,0.3); }
+        .btn-sm { padding: 5px 14px; font-size: 0.7rem; border-radius: 30px; }
+        .operator-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(212, 163, 89, 0.08);
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            padding: 6px 16px 6px 10px;
+            border-radius: 40px;
+        }
+        .operator-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #d4a359, #b88232);
+            color: #0a0e1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        /* hero banner */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(20, 27, 45, 0.9), rgba(15, 23, 42, 0.85));
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            border-radius: 28px;
+            padding: 32px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .hero-banner .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #f3e5ca;
+        }
+        .hero-banner .hero-text h1 span {
+            background: linear-gradient(145deg, #fbbf24, #d4a359);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-banner .hero-text p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            background: rgba(7, 12, 24, 0.6);
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            border-radius: 16px;
+            padding: 12px 20px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .stat-badge h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #f3e5ca;
+        }
+        .stat-badge h3 .green { color: #10b981; }
+        .stat-badge h3 .gold { color: #d4a359; }
+        .stat-badge span {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* layout */
+        .publisher-layout {
+            display: grid;
+            grid-template-columns: 440px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* form panel */
+        .form-panel {
+            background: rgba(14, 22, 40, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            border-radius: 24px;
+            padding: 28px 26px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 20px;
+        }
+        .form-panel .panel-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #f3e5ca;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(212, 163, 89, 0.15);
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+        .form-panel .panel-title i { color: #d4a359; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-group label .rule-tag {
+            font-size: 0.65rem;
+            color: #d4a359;
+            text-transform: none;
+            font-weight: 500;
+        }
+        .input-wrap {
+            display: flex;
+            align-items: center;
+            background: rgba(7, 12, 24, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-radius: 12px;
+            padding: 0 14px;
+            transition: all 0.3s ease;
+        }
+        .input-wrap:focus-within {
+            border-color: #d4a359;
+            box-shadow: 0 0 0 3px rgba(212, 163, 89, 0.1);
+        }
+        .input-wrap i {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+        .input-wrap input,
+        .input-wrap select,
+        .input-wrap textarea {
+            width: 100%;
+            padding: 11px 0;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f3e5ca;
+            font-size: 0.88rem;
+            font-weight: 500;
+            font-family: inherit;
+        }
+        .input-wrap textarea {
+            resize: vertical;
+            min-height: 70px;
+            padding: 10px 0;
+        }
+        .input-wrap input::placeholder,
+        .input-wrap textarea::placeholder {
+            color: #475569;
+            font-weight: 400;
+        }
+        .input-wrap select {
+            appearance: none;
+            cursor: pointer;
+        }
+        .input-wrap .select-arrow {
+            color: #64748b;
+            margin-left: auto;
+            pointer-events: none;
+        }
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .char-alert {
+            font-size: 0.7rem;
+            color: #ef4444;
+            display: none;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .btn-publish {
+            background: linear-gradient(145deg, #d4a359, #b88232);
+            color: #0a0e1a;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 18px rgba(212, 163, 89, 0.3);
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-publish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(212, 163, 89, 0.5);
+        }
+
+        /* right panel - hosted trips */
+        .hosted-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .hosted-header {
+            background: rgba(14, 22, 40, 0.7);
+            border: 1px solid rgba(212, 163, 89, 0.12);
+            border-radius: 16px;
+            padding: 14px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .hosted-header .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: #f3e5ca;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16,185,129,0.5);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .hosted-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* long vertical card */
+        .trip-card {
+            background: rgba(14, 22, 40, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 163, 89, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 480px;
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .trip-card:hover {
+            border-color: #d4a359;
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212, 163, 89, 0.08);
+        }
+        .trip-card .card-tag {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(212, 163, 89, 0.12);
+            border-bottom-left-radius: 12px;
+            padding: 4px 14px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #d4a359;
+            border-left: 1px solid rgba(212, 163, 89, 0.2);
+            border-bottom: 1px solid rgba(212, 163, 89, 0.2);
+        }
+        .trip-card .card-tag.reefer { color: #38bdf8; border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.08); }
+        .trip-card .card-tag.sprinter { color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
+
+        .card-operator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .card-operator .icon-box {
+            width: 42px;
+            height: 42px;
+            background: rgba(212, 163, 89, 0.1);
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d4a359;
+            font-size: 1.1rem;
+        }
+        .card-operator .op-info h4 { font-size: 0.95rem; color: #f3e5ca; }
+        .card-operator .op-info span { font-size: 0.7rem; color: #94a3b8; }
+
+        .route-stepper {
+            position: relative;
+            padding-left: 22px;
+            margin: 14px 0;
+            border-left: 2px dashed rgba(212, 163, 89, 0.25);
+        }
+        .stepper-node {
+            position: relative;
+            margin-bottom: 14px;
+        }
+        .stepper-node:last-child { margin-bottom: 0; }
+        .stepper-node::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #0a0e1a;
+            border: 2px solid #d4a359;
+        }
+        .stepper-node.dest::before {
+            border-color: #10b981;
+            background: #10b981;
+        }
+        .stepper-node .place { font-weight: 600; color: #f3e5ca; font-size: 0.9rem; }
+        .stepper-node .time { font-size: 0.7rem; color: #64748b; font-family: 'JetBrains Mono', monospace; }
+        .stepper-node .flex-badge {
+            font-size: 0.6rem;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56,189,248,0.2);
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .spec-item {
+            background: rgba(7, 12, 24, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.06);
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+        .spec-item span { font-size: 0.6rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block; }
+        .spec-item strong { font-size: 0.8rem; color: #f3e5ca; font-family: 'JetBrains Mono', monospace; }
+
+        .desc-preview {
+            background: rgba(7, 12, 24, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.06);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+            margin: 8px 0 14px;
+            font-style: italic;
+        }
+
+        .card-footer {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .rate-display { font-size: 0.7rem; color: #94a3b8; }
+        .rate-display strong { font-size: 1rem; color: #10b981; font-family: 'Playfair Display', serif; display: block; }
+        .status-btn {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.25);
+            color: #6ee7b7;
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .status-btn:hover { background: rgba(16,185,129,0.2); }
+
+        /* footer */
+        footer {
+            background: #060b16;
+            border-top: 1px solid rgba(212, 163, 89, 0.15);
+            padding: 50px 8% 30px;
+            margin-top: 40px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 24px;
+        }
+        .footer-grid .logo {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .footer-grid .logo i { color: #d4a359; font-size: 1.3rem; }
+        .footer-grid p { color: #94a3b8; font-size: 0.85rem; line-height: 1.6; margin-top: 4px; }
+        .footer-grid h3 { color: #f3e5ca; font-size: 0.95rem; margin-bottom: 14px; letter-spacing: 0.3px; }
+        .footer-grid a { display: block; color: #94a3b8; font-size: 0.8rem; margin: 6px 0; transition: color 0.2s; }
+        .footer-grid a:hover { color: #d4a359; }
+        footer hr { border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 16px 0; }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #141f38;
+            color: #f3e5ca;
+            border: 1px solid #d4a359;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideUp 0.3s ease;
+        }
+        .toast.show { display: flex; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1100px) {
+            .publisher-layout { grid-template-columns: 1fr; }
+            .form-panel { position: static; }
+            .hosted-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-banner { flex-direction: column; text-align: center; }
+            .hero-stats { justify-content: center; }
+        }
+        @media (max-width: 700px) {
+            .hosted-grid { grid-template-columns: 1fr; }
+            .form-grid-2 { grid-template-columns: 1fr; }
+            nav { display: none; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .hero-banner .hero-text h1 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <i class="fas fa-truck-fast"></i>
+        <span>HaulPool</span>
+    </div>
+    <nav>
+        <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#postSection"><i class="fas fa-upload"></i> Post Route</a>
+        <a href="#hostedSection"><i class="fas fa-layer-group"></i> My Manifests</a>
+        <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
+    </nav>
+    <div class="header-actions">
+        <div class="operator-pill">
+            <div class="operator-avatar"><i class="fas fa-user"></i></div>
+            <span style="font-size:0.75rem; color:#f3e5ca; font-weight:600;">Carrier Desk</span>
+        </div>
+        <a href="#" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="container" style="padding: 30px 8%;">
+
+    <!-- HERO BANNER -->
+    <section class="hero-banner">
+        <div class="hero-text">
+            <h1>🚛 Operator Studio · <span>Return Route Publisher</span></h1>
+            <p>Post your unladen or partially filled return transit. Shippers will bid on your remaining cargo space or intercept your route at highway junctions.</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-badge">
+                <h3 id="statTotal">4</h3>
+                <span>Hosted Slots</span>
+            </div>
+            <div class="stat-badge">
+                <h3><span class="green">$1,280</span></h3>
+                <span>Fuel Recouped</span>
+            </div>
+            <div class="stat-badge">
+                <h3><span class="gold">99.2%</span></h3>
+                <span>Corridor Sync</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PUBLISHER LAYOUT -->
+    <div class="publisher-layout" id="postSection">
+
+        <!-- FORM PANEL -->
+        <aside class="form-panel">
+            <div class="panel-title">
+                <i class="fas fa-plus-circle"></i> List Empty Return Route
+            </div>
+
+            <form id="routeForm" onsubmit="handleSubmit(event)">
+
+                <div class="form-group">
+                    <label>Start Location <span class="rule-tag">Departure point</span></label>
+                    <div class="input-wrap">
+                        <i class="fas fa-location-dot"></i>
+                        <input type="text" id="startLoc" placeholder="e.g. Mumbai, Delhi" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Destination <span class="rule-tag">Final terminal</span></label>
+                    <div class="input-wrap">
+                        <i class="fas fa-flag-checkered"></i>
+                        <input type="text" id="endLoc" placeholder="e.g. Bengaluru, Chennai" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Waypoint / Junction <span class="rule-tag">En-route stop</span></label>
+                    <div class="input-wrap">
+                        <i class="fas fa-code-branch"></i>
+                        <input type="text" id="waypoint" placeholder="e.g. Pune, Hyderabad (optional)">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Cargo Type</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-box"></i>
+                            <select id="cargoType">
+                                <option value="Standard Dry Pallets">Standard Dry Pallets</option>
+                                <option value="Refrigerated / Cold-Chain">Refrigerated / Cold-Chain</option>
+                                <option value="Heavy Machinery">Heavy Machinery</option>
+                                <option value="Sprinter Loose Cargo">Sprinter Loose Cargo</option>
+                                <option value="Hazardous / Hazmat">Hazardous / Hazmat</option>
+                                <option value="High-Value Secure">High-Value Secure</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight Capacity</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-weight-scale"></i>
+                            <input type="text" id="weight" placeholder="e.g. 2,400 kg" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Volume / Size</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-cube"></i>
+                            <input type="text" id="volume" placeholder="e.g. 12 Pallets" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle Type</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-truck"></i>
+                            <select id="vehicleType">
+                                <option value="53' Semi-Trailer Dry Van">53' Semi-Trailer Dry Van</option>
+                                <option value="53' Temp-Controlled Reefer">53' Temp-Controlled Reefer</option>
+                                <option value="48' Flatbed">48' Flatbed</option>
+                                <option value="26' Box Truck">26' Box Truck</option>
+                                <option value="Sprinter High-Roof Van">Sprinter High-Roof Van</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Departure Time</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-clock"></i>
+                            <input type="datetime-local" id="departureTime" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Flexibility / Wait</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-hourglass-half"></i>
+                            <select id="flexibility">
+                                <option value="Strict / Zero Detour">Strict / Zero Detour</option>
+                                <option value="+30 Mins Loading Wait">+30 Mins Loading Wait</option>
+                                <option value="+1 Hour Buffer" selected>+1 Hour Buffer</option>
+                                <option value="+2 Hours Flexible">+2 Hours Flexible</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Detailed Instructions
+                        <span class="rule-tag" style="color:#f59e0b;">No numbers allowed here</span>
+                    </label>
+                    <div class="input-wrap">
+                        <i class="fas fa-pen"></i>
+                        <textarea id="description" placeholder="Describe handling: forklift required, strapped cargo, driver assistance available..." required></textarea>
+                    </div>
+                    <div class="char-alert" id="numberAlert">
+                        <i class="fas fa-exclamation-triangle"></i> Numbers are not allowed in this field!
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Asking Rate</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-rupee-sign"></i>
+                        <input type="text" id="rate" placeholder="e.g. ₹12,800 or ₹8/km" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-publish">
+                    <i class="fas fa-cloud-upload-alt"></i> Publish Empty Corridor
+                </button>
+            </form>
+        </aside>
+
+        <!-- HOSTED TRIPS -->
+        <div class="hosted-panel" id="hostedSection">
+            <div class="hosted-header">
+                <div class="title">
+                    <div class="live-dot"></div>
+                    <span>Active Hosted Corridors (<span id="hostedCount">4</span>)</span>
+                </div>
+                <span style="font-size:0.75rem; color:#64748b;">Live on customer portal</span>
+            </div>
+
+            <div class="hosted-grid" id="hostedGrid">
+
+                <!-- Card 1 -->
+                <div class="trip-card">
+                    <div class="card-tag">SLOT READY</div>
+                    <div>
+                        <div class="card-operator">
+                            <div class="icon-box"><i class="fas fa-truck"></i></div>
+                            <div class="op-info">
+                                <h4>Apex Freight #409</h4>
+                                <span>53' Dry Van · DOT #389102</span>
+                            </div>
+                        </div>
+                        <div class="route-stepper">
+                            <div class="stepper-node">
+                                <div class="place">Mumbai</div>
+                                <div class="time">Depart: Tomorrow, 07:00 AM</div>
+                            </div>
+                            <div class="stepper-node">
+                                <div class="place">Pune <span class="flex-badge">+30 Mins</span></div>
+                                <div class="time">Waypoint Stop</div>
+                            </div>
+                            <div class="stepper-node dest">
+                                <div class="place">Bengaluru</div>
+                                <div class="time">Arrival: Tomorrow, 08:30 PM</div>
+                            </div>
+                        </div>
+                        <div class="spec-grid">
+                            <div class="spec-item"><span>Type</span><strong>Dry Pallets</strong></div>
+                            <div class="spec-item"><span>Weight</span><strong>2,400 kg</strong></div>
+                            <div class="spec-item"><span>Volume</span><strong>14 Pallets</strong></div>
+                            <div class="spec-item"><span>Flex</span><strong>+30 Mins</strong></div>
+                        </div>
+                        <div class="desc-preview">"Forklift dock required. Shrink-wrapped cargo preferred. No hazardous liquids."</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="rate-display">Rate <strong>₹12,800</strong></div>
+                        <button class="status-btn" onclick="alert('Slot is active and accepting bookings!')"><i class="fas fa-check"></i> Active</button>
+                    </div>
+                </div>
+
+                <!-- Card 2 - Reefer -->
+                <div class="trip-card">
+                    <div class="card-tag reefer">COLD REEFER</div>
+                    <div>
+                        <div class="card-operator">
+                            <div class="icon-box" style="color:#38bdf8; border-color:rgba(56,189,248,0.3);"><i class="fas fa-snowflake"></i></div>
+                            <div class="op-info">
+                                <h4>Polaris Cold Transport</h4>
+                                <span>53' Reefer · DOT #771092</span>
+                            </div>
+                        </div>
+                        <div class="route-stepper">
+                            <div class="stepper-node">
+                                <div class="place">Delhi</div>
+                                <div class="time">Depart: Oct 26, 05:30 AM</div>
+                            </div>
+                            <div class="stepper-node">
+                                <div class="place">Jaipur <span class="flex-badge">+1 Hour</span></div>
+                                <div class="time">Mid-Transit</div>
+                            </div>
+                            <div class="stepper-node dest">
+                                <div class="place">Ahmedabad</div>
+                                <div class="time">Arrival: Oct 27, 09:00 AM</div>
+                            </div>
+                        </div>
+                        <div class="spec-grid">
+                            <div class="spec-item"><span>Type</span><strong>Refrigerated</strong></div>
+                            <div class="spec-item"><span>Weight</span><strong>1,800 kg</strong></div>
+                            <div class="spec-item"><span>Volume</span><strong>10 Pallets</strong></div>
+                            <div class="spec-item"><span>Flex</span><strong>+1 Hour</strong></div>
+                        </div>
+                        <div class="desc-preview">"Continuous cold chain monitoring. Pre-cooled cargo only. Driver assistance at ramp."</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="rate-display">Rate <strong>₹16,200</strong></div>
+                        <button class="status-btn" onclick="alert('Slot is active and accepting bookings!')"><i class="fas fa-check"></i> Active</button>
+                    </div>
+                </div>
+
+                <!-- Card 3 - Sprinter -->
+                <div class="trip-card">
+                    <div class="card-tag sprinter">SPRINTER</div>
+                    <div>
+                        <div class="card-operator">
+                            <div class="icon-box" style="color:#10b981; border-color:rgba(16,185,129,0.3);"><i class="fas fa-van-shuttle"></i></div>
+                            <div class="op-info">
+                                <h4>MetroSprint Direct</h4>
+                                <span>Sprinter Van · DOT #990143</span>
+                            </div>
+                        </div>
+                        <div class="route-stepper">
+                            <div class="stepper-node">
+                                <div class="place">Chennai</div>
+                                <div class="time">Depart: Oct 27, 09:00 AM</div>
+                            </div>
+                            <div class="stepper-node">
+                                <div class="place">Vellore <span class="flex-badge">Strict</span></div>
+                                <div class="time">Direct Route</div>
+                            </div>
+                            <div class="stepper-node dest">
+                                <div class="place">Hyderabad</div>
+                                <div class="time">Arrival: Oct 27, 02:00 PM</div>
+                            </div>
+                        </div>
+                        <div class="spec-grid">
+                            <div class="spec-item"><span>Type</span><strong>Loose Cartons</strong></div>
+                            <div class="spec-item"><span>Weight</span><strong>600 kg</strong></div>
+                            <div class="spec-item"><span>Volume</span><strong>280 cu.ft</strong></div>
+                            <div class="spec-item"><span>Flex</span><strong>Strict</strong></div>
+                        </div>
+                        <div class="desc-preview">"Direct express delivery. Hand cart and ramp available. Clean dry cargo area."</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="rate-display">Rate <strong>₹6,500</strong></div>
+                        <button class="status-btn" onclick="alert('Slot is active and accepting bookings!')"><i class="fas fa-check"></i> Active</button>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="trip-card">
+                    <div class="card-tag">SLOT READY</div>
+                    <div>
+                        <div class="card-operator">
+                            <div class="icon-box"><i class="fas fa-truck"></i></div>
+                            <div class="op-info">
+                                <h4>NorthStar Freight</h4>
+                                <span>48' Flatbed · DOT #450231</span>
+                            </div>
+                        </div>
+                        <div class="route-stepper">
+                            <div class="stepper-node">
+                                <div class="place">Jaipur</div>
+                                <div class="time">Depart: Oct 28, 10:00 AM</div>
+                            </div>
+                            <div class="stepper-node">
+                                <div class="place">Gurugram <span class="flex-badge">+2 Hours</span></div>
+                                <div class="time">Loading Stop</div>
+                            </div>
+                            <div class="stepper-node dest">
+                                <div class="place">Delhi</div>
+                                <div class="time">Arrival: Oct 28, 06:00 PM</div>
+                            </div>
+                        </div>
+                        <div class="spec-grid">
+                            <div class="spec-item"><span>Type</span><strong>Heavy Machinery</strong></div>
+                            <div class="spec-item"><span>Weight</span><strong>3,200 kg</strong></div>
+                            <div class="spec-item"><span>Volume</span><strong>6 Pallets</strong></div>
+                            <div class="spec-item"><span>Flex</span><strong>+2 Hours</strong></div>
+                        </div>
+                        <div class="desc-preview">"Crane required for loading. Secured with heavy-duty straps. Oversized permit ready."</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="rate-display">Rate <strong>₹18,500</strong></div>
+                        <button class="status-btn" onclick="alert('Slot is active and accepting bookings!')"><i class="fas fa-check"></i> Active</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <i class="fas fa-circle-check" style="color:#d4a359;"></i>
+    <span id="toastMsg">Route published successfully!</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="logo" style="margin-bottom:10px;">
+                <i class="fa-solid fa-truck-ramp-box"></i>
+                <span>HaulPool</span>
+            </div>
+            <p>The centralized deadhead elimination & en-route freight sharing network. Turning unladen transport capacity into shared cargo efficiency.</p>
+        </div>
+        <div>
+            <h3>For Truck Operators</h3>
+            <a href="#postSection">Publish Empty Leg</a>
+            <a href="#hostedSection">Active Manifests</a>
+            <a href="#">Fuel Cost Arbitrage</a>
+            <a href="#">Instant Payout Rules</a>
+        </div>
+        <div>
+            <h3>For Cargo Shippers</h3>
+            <a href="#">Corridor Space Search</a>
+            <a href="#">LTL & Pallet Rates</a>
+            <a href="#">Real-Time Waypoint GPS</a>
+            <a href="#">Transit Cargo Insurance</a>
+        </div>
+        <div>
+            <h3>Platform & Terms</h3>
+            <a href="#">Carrier Verification</a>
+            <a href="#">DOT / FMCSA Compliance</a>
+            <a href="#">Privacy & Route Security</a>
+            <a href="#">24/7 Dispatch Support</a>
+        </div>
+    </div>
+    <hr>
+    <div class="footer-bottom">
+        <div>&copy; 2026 HaulPool Logistics Network Inc. All rights reserved.</div>
+        <div>Designed for Freight Optimizers & Transport Carriers</div>
+    </div>
+</footer>
+
+<script>
+    // Set default datetime
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        now.setHours(now.getHours() + 4);
+        document.getElementById('departureTime').value = now.toISOString().slice(0, 16);
+    });
+
+    // Block numbers in description
+    const descArea = document.getElementById('description');
+    const numberAlert = document.getElementById('numberAlert');
+
+    descArea.addEventListener('keydown', function(e) {
+        if ((e.key >= '0' && e.key <= '9') && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            numberAlert.style.display = 'block';
+            setTimeout(() => numberAlert.style.display = 'none', 3000);
+        }
+    });
+
+    descArea.addEventListener('input', function() {
+        if (/\d/.test(this.value)) {
+            this.value = this.value.replace(/\d/g, '');
+            numberAlert.style.display = 'block';
+            setTimeout(() => numberAlert.style.display = 'none', 3000);
+        }
+    });
+
+    let totalHosted = 4;
+
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        const start = document.getElementById('startLoc').value.trim();
+        const end = document.getElementById('endLoc').value.trim();
+        const waypoint = document.getElementById('waypoint').value.trim() || 'Direct Route';
+        const cargoType = document.getElementById('cargoType').value;
+        const weight = document.getElementById('weight').value.trim();
+        const volume = document.getElementById('volume').value.trim();
+        const vehicle = document.getElementById('vehicleType').value;
+        const departure = document.getElementById('departureTime').value;
+        const flexibility = document.getElementById('flexibility').value;
+        const desc = document.getElementById('description').value.trim();
+        const rate = document.getElementById('rate').value.trim();
+
+        if (!start || !end || !weight || !volume || !desc || !rate) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        const formattedDate = new Date(departure).toLocaleString('en-IN', {
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        const card = document.createElement('div');
+        card.className = 'trip-card';
+        card.innerHTML = `
+            <div class="card-tag">SLOT READY</div>
+            <div>
+                <div class="card-operator">
+                    <div class="icon-box"><i class="fas fa-truck"></i></div>
+                    <div class="op-info">
+                        <h4>Carrier Verified Fleet</h4>
+                        <span>${escapeHtml(vehicle)} · Active Unit</span>
+                    </div>
+                </div>
+                <div class="route-stepper">
+                    <div class="stepper-node">
+                        <div class="place">${escapeHtml(start)}</div>
+                        <div class="time">Depart: ${formattedDate}</div>
+                    </div>
+                    <div class="stepper-node">
+                        <div class="place">${escapeHtml(waypoint)} <span class="flex-badge">${escapeHtml(flexibility)}</span></div>
+                        <div class="time">Waypoint Stop</div>
+                    </div>
+                    <div class="stepper-node dest">
+                        <div class="place">${escapeHtml(end)}</div>
+                        <div class="time">Unloading Terminal</div>
+                    </div>
+                </div>
+                <div class="spec-grid">
+                    <div class="spec-item"><span>Type</span><strong>${escapeHtml(cargoType)}</strong></div>
+                    <div class="spec-item"><span>Weight</span><strong>${escapeHtml(weight)}</strong></div>
+                    <div class="spec-item"><span>Volume</span><strong>${escapeHtml(volume)}</strong></div>
+                    <div class="spec-item"><span>Flex</span><strong>${escapeHtml(flexibility)}</strong></div>
+                </div>
+                <div class="desc-preview">"${escapeHtml(desc)}"</div>
+            </div>
+            <div class="card-footer">
+                <div class="rate-display">Rate <strong>${escapeHtml(rate)}</strong></div>
+                <button class="status-btn" onclick="alert('Slot is active and accepting bookings!')"><i class="fas fa-check"></i> Active</button>
+            </div>
+        `;
+
+        const grid = document.getElementById('hostedGrid');
+        grid.insertBefore(card, grid.firstChild);
+
+        totalHosted++;
+        document.getElementById('statTotal').textContent = totalHosted;
+        document.getElementById('hostedCount').textContent = totalHosted;
+
+        document.getElementById('routeForm').reset();
+        showToast(`✅ Corridor ${start} → ${end} published successfully!`);
+
+        // Reset date
+        const now = new Date();
+        now.setHours(now.getHours() + 4);
+        document.getElementById('departureTime').value = now.toISOString().slice(0, 16);
+
+        document.getElementById('hostedSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+</script>
+
+</body>
+</html>

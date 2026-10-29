@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HaulPool · Customer Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            background: radial-gradient(circle at 20% 10%, #0d1424, #070b14 90%);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        a { text-decoration: none; color: inherit; }
+        section { padding: 60px 8%; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* --- non-sticky header --- */
+        header {
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 163, 89, 0.25);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 50;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .logo i { color: #d4a359; font-size: 1.6rem; }
+        nav { display: flex; gap: 28px; font-weight: 600; color: #94a3b8; align-items: center; }
+        nav a { transition: 0.2s; padding: 4px 10px; border-radius: 30px; }
+        nav a:hover { color: #f3e5ca; background: rgba(212, 163, 89, 0.12); }
+        /* Active state for navigation */
+        nav a.active {
+            color: #f3e5ca;
+            background: rgba(212, 163, 89, 0.15);
+            border: 1px solid rgba(212, 163, 89, 0.2);
+        }
+        .header-actions { display: flex; gap: 12px; }
+        .btn {
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+        }
+        .btn-outline { border: 1px solid rgba(212, 163, 89, 0.4); color: #f3e5ca; background: rgba(20,27,45,0.5); }
+        .btn-outline:hover { background: rgba(212, 163, 89, 0.15); border-color: #d4a359; transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(145deg, #d4a359, #b88232); color: #0a0e1a; box-shadow: 0 6px 16px rgba(212, 163, 89, 0.3); }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 28px rgba(212, 163, 89, 0.5); }
+
+        /* === CUSTOMER HERO === */
+        .customer-hero {
+            padding-top: 30px;
+            text-align: center;
+        }
+        .customer-greeting {
+            margin-bottom: 30px;
+        }
+        .customer-greeting .badge {
+            display: inline-block;
+            background: rgba(212, 163, 89, 0.12);
+            border: 1px solid rgba(212, 163, 89, 0.3);
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #f3e5ca;
+            margin-bottom: 12px;
+        }
+        .customer-greeting h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            background: linear-gradient(145deg, #fffdf7, #f3e5ca, #d4a359);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        .customer-greeting h1 .highlight-name {
+            background: linear-gradient(145deg, #fbbf24, #d4a359);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        .customer-greeting h1 .highlight-name::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #d4a359, transparent);
+            border-radius: 4px;
+        }
+        .customer-greeting p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+
+        /* === SEARCH SECTION === */
+        .search-section {
+            background: rgba(14, 22, 40, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            border-radius: 32px;
+            padding: 40px 36px;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .search-section .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .search-section .label-row span {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .search-section .label-row .search-hint {
+            color: #64748b;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .search-section .label-row .search-hint i { color: #d4a359; }
+        .search-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 220px;
+            position: relative;
+        }
+        .search-box label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .search-box .input-wrap {
+            display: flex;
+            align-items: center;
+            background: rgba(7, 12, 24, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 16px;
+            padding: 0 16px;
+            transition: all 0.3s ease;
+        }
+        .search-box .input-wrap:focus-within {
+            border-color: #d4a359;
+            box-shadow: 0 0 0 3px rgba(212, 163, 89, 0.15);
+        }
+        .search-box .input-wrap i {
+            color: #64748b;
+            font-size: 1rem;
+            margin-right: 12px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 14px 0;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f3e5ca;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .search-box input::placeholder {
+            color: #475569;
+            font-weight: 400;
+        }
+        .search-btn-wrap {
+            display: flex;
+            align-items: flex-end;
+        }
+        .search-btn-wrap .btn {
+            padding: 14px 32px;
+            border-radius: 16px;
+            font-size: 1rem;
+        }
+
+        /* === QUICK FILTER TAGS === */
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .filter-tags .tag {
+            background: rgba(20, 27, 45, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .filter-tags .tag:hover {
+            border-color: #d4a359;
+            color: #f3e5ca;
+            background: rgba(212, 163, 89, 0.08);
+        }
+        .filter-tags .tag i { margin-right: 6px; color: #d4a359; }
+
+        /* === RESULTS / TRIP CARDS === */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .results-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #f3e5ca;
+        }
+        .results-header .count {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .trip-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .trip-card {
+            background: rgba(14, 22, 40, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 163, 89, 0.12);
+            border-radius: 24px;
+            padding: 24px 24px 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .trip-card:hover {
+            transform: translateY(-6px);
+            border-color: #d4a359;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+        .trip-card .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+        .trip-card .trip-header .operator {
+            font-weight: 600;
+            color: #f3e5ca;
+            font-size: 0.95rem;
+        }
+        .trip-card .trip-header .operator i { color: #d4a359; margin-right: 6px; }
+        .trip-card .trip-header .status {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 30px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        .trip-card .route-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-top: 1px solid rgba(148, 163, 184, 0.06);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.06);
+            margin-bottom: 12px;
+        }
+        .trip-card .route-line .stop-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .trip-card .route-line .stop-point .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #d4a359;
+            margin-bottom: 4px;
+        }
+        .trip-card .route-line .stop-point .dot.green { background: #10b981; }
+        .trip-card .route-line .stop-point .city {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #f3e5ca;
+        }
+        .trip-card .route-line .stop-point .time {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .trip-card .route-line .line-connector {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, #d4a359, #3b82f6);
+            opacity: 0.3;
+            min-width: 20px;
+        }
+        .trip-card .trip-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .trip-card .trip-footer .capacity {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .trip-card .trip-footer .capacity strong { color: #f3e5ca; }
+        .trip-card .trip-footer .price {
+            font-weight: 700;
+            color: #d4a359;
+            font-size: 1.1rem;
+        }
+        .trip-card .trip-footer .btn-sm {
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #d4a359, #b88232);
+            color: #0a0e1a;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .trip-card .trip-footer .btn-sm:hover { transform: scale(1.04); }
+
+        /* === CUSTOMER STATS === */
+        .customer-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0 20px;
+        }
+        .customer-stats .stat-card {
+            background: rgba(14, 22, 40, 0.6);
+            border: 1px solid rgba(212, 163, 89, 0.08);
+            border-radius: 20px;
+            padding: 22px 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .customer-stats .stat-card:hover {
+            border-color: rgba(212, 163, 89, 0.3);
+            transform: translateY(-4px);
+        }
+        .customer-stats .stat-card i {
+            font-size: 1.8rem;
+            color: #d4a359;
+            margin-bottom: 8px;
+        }
+        .customer-stats .stat-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #f3e5ca;
+        }
+        .customer-stats .stat-card p {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* === FOOTER (HaulPool) === */
+        footer {
+            background: #060b16;
+            border-top: 1px solid rgba(212, 163, 89, 0.15);
+            padding: 60px 8% 40px;
+            margin-top: 40px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 35px;
+            margin-bottom: 30px;
+        }
+        .footer-grid .logo {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .footer-grid .logo i { color: #d4a359; font-size: 1.4rem; }
+        .footer-grid p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 6px;
+        }
+        .footer-grid h3 {
+            color: #f3e5ca;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            letter-spacing: 0.3px;
+        }
+        .footer-grid a {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 8px 0;
+            transition: color 0.2s ease;
+        }
+        .footer-grid a:hover {
+            color: #d4a359;
+        }
+        footer hr {
+            border: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 20px 0;
+        }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer-bottom div:last-child {
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        /* responsive */
+        @media (max-width: 1100px) {
+            .customer-stats { grid-template-columns: repeat(2,1fr); }
+            .footer-grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 700px) {
+            .customer-stats, .footer-grid { grid-template-columns: 1fr; }
+            .customer-greeting h1 { font-size: 32px; }
+            .search-section { padding: 24px 18px; }
+            .search-row { flex-direction: column; }
+            .search-btn-wrap { width: 100%; }
+            .search-btn-wrap .btn { width: 100%; justify-content: center; }
+            nav { display: none; }
+            .trip-cards-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- header -->
+<header>
+    <div class="logo">
+        <i class="fas fa-truck-fast"></i>
+        <span>HaulPool</span>
+    </div>
+    <nav>
+        <!-- Dashboard link now has the "active" class to highlight it -->
+        <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-box"></i> My Shipments</a>
+        <a href="#"><i class="fas fa-heart"></i> Saved Routes</a>
+        <a href="#"><i class="fas fa-bell"></i> Alerts</a>
+    </nav>
+    <div class="header-actions">
+        <a href="#" class="btn btn-outline"><i class="fas fa-user-circle"></i> Profile</a>
+        <a href="#" class="btn btn-primary"><i class="fas fa-plus-circle"></i> New Request</a>
+    </div>
+</header>
+
+<!-- customer hero -->
+<section>
+    <div class="customer-hero container">
+        <div class="customer-greeting">
+            <div class="badge"><i class="fas fa-user-tie"></i> Customer Portal</div>
+            <h1>Welcome back, <span class="highlight-name">CUSTOMER NAME</span></h1>
+            <p>Find available trucks along your route · Book space instantly · Track in real-time</p>
+        </div>
+    </div>
+</section>
+
+<!-- search section -->
+<section style="padding-top: 0;">
+    <div class="search-section container">
+        <div class="label-row">
+            <span><i class="fas fa-route" style="color: #d4a359; margin-right: 6px;"></i> Find your cargo match</span>
+            <span class="search-hint"><i class="fas fa-info-circle"></i> Fill one or both fields</span>
+        </div>
+        <div class="search-row">
+            <div class="search-box">
+                <label><i class="fas fa-flag-checkered"></i> Starting from</label>
+                <div class="input-wrap">
+                    <i class="fas fa-location-dot"></i>
+                    <input type="text" id="startSearch" placeholder="e.g. Mumbai, Delhi, Chennai..." value="Mumbai">
+                </div>
+            </div>
+            <div class="search-box">
+                <label><i class="fas fa-flag"></i> Going to</label>
+                <div class="input-wrap">
+                    <i class="fas fa-location-arrow"></i>
+                    <input type="text" id="destSearch" placeholder="e.g. Delhi, Bengaluru, Pune...">
+                </div>
+            </div>
+            <div class="search-btn-wrap">
+                <button class="btn btn-primary" onclick="performSearch()">
+                    <i class="fas fa-search"></i> Find Routes
+                </button>
+            </div>
+        </div>
+        <div class="filter-tags">
+            <span class="tag"><i class="fas fa-clock"></i> Today</span>
+            <span class="tag"><i class="fas fa-clock"></i> Tomorrow</span>
+            <span class="tag"><i class="fas fa-weight-scale"></i> Under 2T</span>
+            <span class="tag"><i class="fas fa-weight-scale"></i> 2-5T</span>
+            <span class="tag"><i class="fas fa-box"></i> LTL Only</span>
+            <span class="tag"><i class="fas fa-star"></i> Verified Carriers</span>
+        </div>
+    </div>
+</section>
+
+<!-- customer stats -->
+<section style="padding-top: 0;">
+    <div class="customer-stats container">
+        <div class="stat-card">
+            <i class="fas fa-truck"></i>
+            <h3>14</h3>
+            <p>Available Trips</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-boxes"></i>
+            <h3>8</h3>
+            <p>Active Shipments</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-clock-rotate-left"></i>
+            <h3>23</h3>
+            <p>Past Deliveries</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-star"></i>
+            <h3>4.8</h3>
+            <p>Rating Score</p>
+        </div>
+    </div>
+</section>
+
+<!-- results -->
+<section style="padding-top: 0;">
+    <div class="container">
+        <div class="results-header">
+            <h2><i class="fas fa-route" style="color: #d4a359; margin-right: 12px;"></i>Available Trips</h2>
+            <span class="count"><span id="resultCount">12</span> routes found</span>
+        </div>
+
+        <div class="trip-cards-grid" id="tripResults">
+            <!-- card 1 -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <span class="operator"><i class="fas fa-building"></i> TransLogistics Pvt Ltd</span>
+                    <span class="status"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Available</span>
+                </div>
+                <div class="route-line">
+                    <div class="stop-point">
+                        <div class="dot"></div>
+                        <span class="city">Mumbai</span>
+                        <span class="time">08:30</span>
+                    </div>
+                    <div class="line-connector"></div>
+                    <div class="stop-point">
+                        <div class="dot green"></div>
+                        <span class="city">Delhi</span>
+                        <span class="time">18:45</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px; font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;">
+                    <span><i class="fas fa-clock" style="color: #d4a359;"></i> 10h 15m</span>
+                    <span><i class="fas fa-arrows-left-right" style="color: #d4a359;"></i> 1,400 km</span>
+                    <span><i class="fas fa-box" style="color: #d4a359;"></i> 2.4T free</span>
+                </div>
+                <div class="trip-footer">
+                    <span class="capacity"><strong>Free capacity:</strong> 2.4 tons</span>
+                    <span class="price">₹12,800</span>
+                    <button class="btn-sm"><i class="fas fa-cart-plus"></i> Book Now</button>
+                </div>
+            </div>
+
+            <!-- card 2 -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <span class="operator"><i class="fas fa-building"></i> SpeedCargo Express</span>
+                    <span class="status"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px; color: #f59e0b;"></i> Limited</span>
+                </div>
+                <div class="route-line">
+                    <div class="stop-point">
+                        <div class="dot"></div>
+                        <span class="city">Pune</span>
+                        <span class="time">09:15</span>
+                    </div>
+                    <div class="line-connector"></div>
+                    <div class="stop-point">
+                        <div class="dot green"></div>
+                        <span class="city">Bengaluru</span>
+                        <span class="time">17:30</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px; font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;">
+                    <span><i class="fas fa-clock" style="color: #d4a359;"></i> 8h 15m</span>
+                    <span><i class="fas fa-arrows-left-right" style="color: #d4a359;"></i> 840 km</span>
+                    <span><i class="fas fa-box" style="color: #d4a359;"></i> 1.1T free</span>
+                </div>
+                <div class="trip-footer">
+                    <span class="capacity"><strong>Free capacity:</strong> 1.1 tons</span>
+                    <span class="price">₹7,600</span>
+                    <button class="btn-sm"><i class="fas fa-cart-plus"></i> Book Now</button>
+                </div>
+            </div>
+
+            <!-- card 3 -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <span class="operator"><i class="fas fa-building"></i> GreenHaul Logistics</span>
+                    <span class="status"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Available</span>
+                </div>
+                <div class="route-line">
+                    <div class="stop-point">
+                        <div class="dot"></div>
+                        <span class="city">Chennai</span>
+                        <span class="time">07:00</span>
+                    </div>
+                    <div class="line-connector"></div>
+                    <div class="stop-point">
+                        <div class="dot green"></div>
+                        <span class="city">Hyderabad</span>
+                        <span class="time">14:30</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px; font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;">
+                    <span><i class="fas fa-clock" style="color: #d4a359;"></i> 7h 30m</span>
+                    <span><i class="fas fa-arrows-left-right" style="color: #d4a359;"></i> 720 km</span>
+                    <span><i class="fas fa-box" style="color: #d4a359;"></i> 3.8T free</span>
+                </div>
+                <div class="trip-footer">
+                    <span class="capacity"><strong>Free capacity:</strong> 3.8 tons</span>
+                    <span class="price">₹9,400</span>
+                    <button class="btn-sm"><i class="fas fa-cart-plus"></i> Book Now</button>
+                </div>
+            </div>
+
+            <!-- card 4 -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <span class="operator"><i class="fas fa-building"></i> NorthStar Freight</span>
+                    <span class="status"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px; color: #f59e0b;"></i> Limited</span>
+                </div>
+                <div class="route-line">
+                    <div class="stop-point">
+                        <div class="dot"></div>
+                        <span class="city">Jaipur</span>
+                        <span class="time">10:00</span>
+                    </div>
+                    <div class="line-connector"></div>
+                    <div class="stop-point">
+                        <div class="dot green"></div>
+                        <span class="city">Delhi</span>
+                        <span class="time">13:30</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px; font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;">
+                    <span><i class="fas fa-clock" style="color: #d4a359;"></i> 3h 30m</span>
+                    <span><i class="fas fa-arrows-left-right" style="color: #d4a359;"></i> 280 km</span>
+                    <span><i class="fas fa-box" style="color: #d4a359;"></i> 0.8T free</span>
+                </div>
+                <div class="trip-footer">
+                    <span class="capacity"><strong>Free capacity:</strong> 0.8 tons</span>
+                    <span class="price">₹3,200</span>
+                    <button class="btn-sm"><i class="fas fa-cart-plus"></i> Book Now</button>
+                </div>
+            </div>
+
+            <!-- card 5 -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <span class="operator"><i class="fas fa-building"></i> EastWest Carriers</span>
+                    <span class="status"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Available</span>
+                </div>
+                <div class="route-line">
+                    <div class="stop-point">
+                        <div class="dot"></div>
+                        <span class="city">Kolkata</span>
+                        <span class="time">06:30</span>
+                    </div>
+                    <div class="line-connector"></div>
+                    <div class="stop-point">
+                        <div class="dot green"></div>
+                        <span class="city">Guwahati</span>
+                        <span class="time">16:00</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px; font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;">
+                    <span><i class="fas fa-clock" style="color: #d4a359;"></i> 9h 30m</span>
+                    <span><i class="fas fa-arrows-left-right" style="color: #d4a359;"></i> 1,120 km</span>
+                    <span><i class="fas fa-box" style="color: #d4a359;"></i> 2.0T free</span>
+                </div>
+                <div class="trip-footer">
+                    <span class="capacity"><strong>Free capacity:</strong> 2.0 tons</span>
+                    <span class="price">₹10,800</span>
+                    <button class="btn-sm"><i class="fas fa-cart-plus"></i> Book Now</button>
+                </div>
+            </div>
+
+            <!-- card 6 -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <span class="operator"><i class="fas fa-building"></i> RapidTransit Co.</span>
+                    <span class="status"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Available</span>
+                </div>
+                <div class="route-line">
+                    <div class="stop-point">
+                        <div class="dot"></div>
+                        <span class="city">Ahmedabad</span>
+                        <span class="time">08:00</span>
+                    </div>
+                    <div class="line-connector"></div>
+                    <div class="stop-point">
+                        <div class="dot green"></div>
+                        <span class="city">Mumbai</span>
+                        <span class="time">15:20</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px; font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;">
+                    <span><i class="fas fa-clock" style="color: #d4a359;"></i> 7h 20m</span>
+                    <span><i class="fas fa-arrows-left-right" style="color: #d4a359;"></i> 530 km</span>
+                    <span><i class="fas fa-box" style="color: #d4a359;"></i> 1.6T free</span>
+                </div>
+                <div class="trip-footer">
+                    <span class="capacity"><strong>Free capacity:</strong> 1.6 tons</span>
+                    <span class="price">₹6,500</span>
+                    <button class="btn-sm"><i class="fas fa-cart-plus"></i> Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- cta banner -->
+<section style="padding-top: 20px;">
+    <div class="cta-block container" style="background: linear-gradient(145deg, rgba(20, 32, 56, 0.9), rgba(8, 14, 26, 0.95)); border: 1px solid rgba(212, 163, 89, 0.3); border-radius: 36px; padding: 50px 40px; text-align: center; margin: 0 0 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 34px; color: #f3e5ca;">Need a custom route?</h2>
+        <p style="color: #94a3b8; font-size: 1.05rem; max-width: 600px; margin: 12px auto 24px;">Post your shipment requirements and let operators bid for your cargo.</p>
+        <a href="#" class="btn btn-primary" style="padding: 14px 36px; font-size: 1.05rem;"><i class="fas fa-pen-to-square"></i> Post Shipment Request</a>
+    </div>
+</section>
+
+<!-- footer -->
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="logo" style="margin-bottom: 14px;">
+                <i class="fa-solid fa-truck-ramp-box"></i>
+                <span>HaulPool</span>
+            </div>
+            <p>The centralized deadhead elimination & en-route freight sharing network. Turning unladen transport capacity into shared cargo efficiency.</p>
+        </div>
+
+        <div>
+            <h3>For Truck Operators</h3>
+            <a href="#post">Publish Empty Leg</a>
+            <a href="#calculator">Fuel Cost Arbitrage</a>
+            <a href="#fleet">Fleet Telematics Sync</a>
+            <a href="#payouts">Instant Payout Rules</a>
+        </div>
+
+        <div>
+            <h3>For Cargo Shippers</h3>
+            <a href="#search">Corridor Space Search</a>
+            <a href="#partial">LTL & Pallet Rates</a>
+            <a href="#tracking">Real-Time Waypoint GPS</a>
+            <a href="#insurance">Transit Cargo Insurance</a>
+        </div>
+
+        <div>
+            <h3>Platform & Terms</h3>
+            <a href="#safety">Carrier Verification</a>
+            <a href="#compliance">DOT / FMCSA Compliance</a>
+            <a href="#privacy">Privacy & Route Security</a>
+            <a href="#support">24/7 Dispatch Support</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="footer-bottom">
+        <div>&copy; 2026 HaulPool Logistics Network Inc. All rights reserved.</div>
+        <div>Designed for Freight Optimizers & Transport Carriers</div>
+    </div>
+</footer>
+
+<!-- search functionality -->
+<script>
+    function performSearch() {
+        const startVal = document.getElementById('startSearch').value.trim().toLowerCase();
+        const destVal = document.getElementById('destSearch').value.trim().toLowerCase();
+        const cards = document.querySelectorAll('.trip-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const routeText = card.querySelector('.route-line').textContent.toLowerCase();
+            let show = true;
+
+            // If both are empty, show all
+            if (startVal === '' && destVal === '') {
+                show = true;
+            } else {
+                // If start is filled, require start location in route
+                if (startVal !== '') {
+                    // Check if start appears in route (simplified: check if city name exists)
+                    const startCities = ['mumbai', 'delhi', 'pune', 'chennai', 'kolkata', 'ahmedabad', 'jaipur', 'bengaluru', 'hyderabad', 'guwahati'];
+                    let startMatch = false;
+                    for (let city of startCities) {
+                        if (startVal.includes(city) && routeText.includes(city)) {
+                            startMatch = true;
+                            break;
+                        }
+                    }
+                    // if route contains the start city as a starting point (simplified)
+                    // we check if the start city appears in the first stop
+                    const firstStop = card.querySelector('.route-line .stop-point:first-child .city')?.textContent.toLowerCase() || '';
+                    if (firstStop.includes(startVal) || routeText.includes(startVal)) {
+                        startMatch = true;
+                    }
+                    if (!startMatch) {
+                        show = false;
+                    }
+                }
+
+                // If dest is filled, require dest location in route
+                if (destVal !== '' && show) {
+                    const lastStop = card.querySelector('.route-line .stop-point:last-child .city')?.textContent.toLowerCase() || '';
+                    if (!lastStop.includes(destVal) && !routeText.includes(destVal)) {
+                        show = false;
+                    }
+                }
+            }
+
+            card.style.display = show ? 'block' : 'none';
+            if (show) visibleCount++;
+        });
+
+        document.getElementById('resultCount').textContent = visibleCount;
+
+        // Visual feedback
+        const btn = document.querySelector('.search-btn-wrap .btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Filtered';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+        }, 1500);
+    }
+
+    // Trigger search on Enter key
+    document.querySelectorAll('.search-box input').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    });
+
+    // Tag clicks as quick filters
+    document.querySelectorAll('.filter-tags .tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+            const text = this.textContent.trim();
+            if (text.includes('Today') || text.includes('Tomorrow')) {
+                // Simulate filter by time
+                this.style.borderColor = '#d4a359';
+                this.style.color = '#f3e5ca';
+                setTimeout(() => {
+                    this.style.borderColor = '';
+                    this.style.color = '';
+                }, 1000);
+            }
+            // Simulate weight filters
+            if (text.includes('Under 2T')) {
+                const cards = document.querySelectorAll('.trip-card');
+                cards.forEach((card, index) => {
+                    const capacityText = card.querySelector('.trip-footer .capacity')?.textContent || '';
+                    if (index % 2 === 0) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                document.getElementById('resultCount').textContent = '3';
+                setTimeout(() => {
+                    cards.forEach(c => c.style.display = 'block');
+                    document.getElementById('resultCount').textContent = '6';
+                }, 2000);
+            }
+        });
+    });
+
+    // Book button click feedback
+    document.querySelectorAll('.btn-sm').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const original = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+            this.style.opacity = '0.7';
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-check"></i> Booked!';
+                this.style.background = '#10b981';
+                this.style.color = '#fff';
+                setTimeout(() => {
+                    this.innerHTML = original;
+                    this.style.background = '';
+                    this.style.color = '';
+                    this.style.opacity = '1';
+                }, 1500);
+            }, 1200);
+        });
+    });
+
+    // Trip card click - show details
+    document.querySelectorAll('.trip-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.btn-sm')) return;
+            const operator = this.querySelector('.operator')?.textContent.trim() || 'Trip';
+            alert(`📦 ${operator}\n\nRoute: ${this.querySelector('.route-line')?.textContent.trim() || ''}\n\nClick "Book Now" to reserve space.`);
+        });
+    });
+</script>
+
+</body>
+</html>

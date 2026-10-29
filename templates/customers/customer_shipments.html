@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HaulPool · My Shipments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            background: radial-gradient(circle at 20% 10%, #0d1424, #070b14 90%);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        a { text-decoration: none; color: inherit; }
+        section { padding: 40px 8%; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* header */
+        header {
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 163, 89, 0.25);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 50;
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .logo i { color: #d4a359; font-size: 1.5rem; }
+        nav { display: flex; gap: 24px; font-weight: 600; color: #94a3b8; align-items: center; }
+        nav a { transition: 0.2s; padding: 4px 10px; border-radius: 30px; }
+        nav a:hover { color: #f3e5ca; background: rgba(212, 163, 89, 0.12); }
+        nav a.active { color: #f3e5ca; background: rgba(212, 163, 89, 0.1); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+        }
+        .btn-outline { border: 1px solid rgba(212, 163, 89, 0.4); color: #f3e5ca; background: rgba(20,27,45,0.5); }
+        .btn-outline:hover { background: rgba(212, 163, 89, 0.15); border-color: #d4a359; transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(145deg, #d4a359, #b88232); color: #0a0e1a; box-shadow: 0 6px 16px rgba(212, 163, 89, 0.3); }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 28px rgba(212, 163, 89, 0.5); }
+        .btn-success { background: linear-gradient(145deg, #10b981, #059669); color: #fff; }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+        .btn-sm {
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        /* page header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .page-header .greeting {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .page-header .greeting h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #f3e5ca;
+        }
+        .page-header .greeting h1 .highlight {
+            background: linear-gradient(145deg, #fbbf24, #d4a359);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header .greeting .avatar-sm {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid #d4a359;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #d4a359;
+        }
+        .page-header .stats-summary {
+            display: flex;
+            gap: 20px;
+            background: rgba(14, 22, 40, 0.6);
+            padding: 10px 22px;
+            border-radius: 40px;
+            border: 1px solid rgba(212, 163, 89, 0.1);
+        }
+        .page-header .stats-summary .stat-item {
+            text-align: center;
+        }
+        .page-header .stats-summary .stat-item .num {
+            font-weight: 700;
+            color: #f3e5ca;
+            font-size: 1.1rem;
+        }
+        .page-header .stats-summary .stat-item .label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .page-header .stats-summary .divider {
+            width: 1px;
+            background: rgba(148, 163, 184, 0.15);
+        }
+
+        /* filter bar */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(14, 22, 40, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 163, 89, 0.06);
+            align-items: center;
+        }
+        .filter-bar .filter-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .filter-bar .filter-tag {
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(148, 163, 184, 0.06);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filter-bar .filter-tag:hover,
+        .filter-bar .filter-tag.active {
+            border-color: #d4a359;
+            color: #f3e5ca;
+            background: rgba(212, 163, 89, 0.08);
+        }
+        .filter-bar .filter-tag i { margin-right: 4px; }
+
+        /* shipment list */
+        .shipment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .shipment-card {
+            background: rgba(14, 22, 40, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 163, 89, 0.1);
+            border-radius: 20px;
+            padding: 20px 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+        .shipment-card:hover {
+            border-color: rgba(212, 163, 89, 0.3);
+            transform: translateX(4px);
+            background: rgba(20, 30, 50, 0.8);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .shipment-card .shipment-main {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .shipment-card .shipment-top {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 20px;
+        }
+        .shipment-card .shipment-top .shipment-id {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #64748b;
+            background: rgba(148, 163, 184, 0.06);
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+        .shipment-card .shipment-top .status-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 14px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .status-delivered { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .status-in-transit { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .status-cancelled { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+        .shipment-card .route-detail {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .shipment-card .route-detail .stop {
+            display: flex;
+            flex-direction: column;
+        }
+        .shipment-card .route-detail .stop .city {
+            font-weight: 600;
+            color: #f3e5ca;
+            font-size: 1rem;
+        }
+        .shipment-card .route-detail .stop .time {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .shipment-card .route-detail .arrow {
+            color: #d4a359;
+            font-size: 0.8rem;
+        }
+        .shipment-card .route-detail .arrow i { opacity: 0.5; }
+
+        .shipment-card .shipment-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 28px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .shipment-card .shipment-meta .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .shipment-card .shipment-meta .meta-item i {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+        .shipment-card .shipment-meta .meta-item strong {
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .shipment-card .shipment-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            min-width: 100px;
+        }
+        .shipment-card .shipment-right .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #d4a359;
+            font-weight: 700;
+        }
+        .shipment-card .shipment-right .action-btn {
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(212, 163, 89, 0.08);
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            color: #d4a359;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .shipment-card .shipment-right .action-btn:hover {
+            background: rgba(212, 163, 89, 0.15);
+        }
+
+        /* empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(14, 22, 40, 0.4);
+            border-radius: 28px;
+            border: 1px dashed rgba(212, 163, 89, 0.15);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #475569;
+            margin-bottom: 16px;
+        }
+        .empty-state h3 {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* footer */
+        footer {
+            background: #060b16;
+            border-top: 1px solid rgba(212, 163, 89, 0.15);
+            padding: 50px 8% 30px;
+            margin-top: 40px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 24px;
+        }
+        .footer-grid .logo {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .footer-grid .logo i { color: #d4a359; font-size: 1.3rem; }
+        .footer-grid p { color: #94a3b8; font-size: 0.85rem; line-height: 1.6; margin-top: 4px; }
+        .footer-grid h3 { color: #f3e5ca; font-size: 0.95rem; margin-bottom: 14px; letter-spacing: 0.3px; }
+        .footer-grid a { display: block; color: #94a3b8; font-size: 0.8rem; margin: 6px 0; transition: color 0.2s; }
+        .footer-grid a:hover { color: #d4a359; }
+        footer hr { border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 16px 0; }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .shipment-card { grid-template-columns: 1fr; }
+            .shipment-card .shipment-right {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                padding-top: 12px;
+                border-top: 1px solid rgba(148, 163, 184, 0.06);
+            }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .page-header .stats-summary { width: 100%; justify-content: space-around; }
+        }
+        @media (max-width: 700px) {
+            nav { display: none; }
+            .page-header .greeting h1 { font-size: 24px; }
+            .filter-bar { gap: 8px; }
+            .shipment-card .shipment-top { flex-direction: column; align-items: flex-start; }
+            .shipment-card .route-detail { flex-wrap: wrap; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- header -->
+<header>
+    <div class="logo">
+        <i class="fas fa-truck-fast"></i>
+        <span>HaulPool</span>
+    </div>
+    <nav>
+        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-route"></i> Find Trips</a>
+        <a href="#"><i class="fas fa-user"></i> Profile</a>
+        <a href="#" class="active"><i class="fas fa-box"></i> Shipments</a>
+    </nav>
+    <div class="header-actions">
+        <a href="#" class="btn btn-primary"><i class="fas fa-plus-circle"></i> New Shipment</a>
+    </div>
+</header>
+
+<!-- page content -->
+<section>
+    <div class="container">
+
+        <!-- page header -->
+        <div class="page-header">
+            <div class="greeting">
+                <div class="avatar-sm"><i class="fas fa-user"></i></div>
+                <div>
+                    <h1>My Shipments · <span class="highlight">CUSTOMER NAME</span></h1>
+                    <span style="color: #64748b; font-size: 0.85rem;"><i class="fas fa-clock-rotate-left"></i> View your complete shipping history</span>
+                </div>
+            </div>
+            <div class="stats-summary">
+                <div class="stat-item">
+                    <div class="num" id="totalCount">18</div>
+                    <div class="label">Total</div>
+                </div>
+                <div class="divider"></div>
+                <div class="stat-item">
+                    <div class="num" style="color: #10b981;" id="deliveredCount">12</div>
+                    <div class="label">Delivered</div>
+                </div>
+                <div class="divider"></div>
+                <div class="stat-item">
+                    <div class="num" style="color: #3b82f6;" id="transitCount">4</div>
+                    <div class="label">In Transit</div>
+                </div>
+                <div class="divider"></div>
+                <div class="stat-item">
+                    <div class="num" style="color: #f59e0b;" id="pendingCount">2</div>
+                    <div class="label">Pending</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- filter bar -->
+        <div class="filter-bar">
+            <span class="filter-label"><i class="fas fa-filter"></i> Filter:</span>
+            <span class="filter-tag active" data-filter="all" onclick="filterShipments('all')"><i class="fas fa-list"></i> All</span>
+            <span class="filter-tag" data-filter="delivered" onclick="filterShipments('delivered')"><i class="fas fa-check-circle" style="color: #10b981;"></i> Delivered</span>
+            <span class="filter-tag" data-filter="in-transit" onclick="filterShipments('in-transit')"><i class="fas fa-truck" style="color: #3b82f6;"></i> In Transit</span>
+            <span class="filter-tag" data-filter="pending" onclick="filterShipments('pending')"><i class="fas fa-clock" style="color: #f59e0b;"></i> Pending</span>
+            <span class="filter-tag" data-filter="cancelled" onclick="filterShipments('cancelled')"><i class="fas fa-times-circle" style="color: #ef4444;"></i> Cancelled</span>
+            <span style="margin-left: auto; color: #64748b; font-size: 0.75rem;" id="filterCount">Showing 18 shipments</span>
+        </div>
+
+        <!-- shipment list -->
+        <div class="shipment-list" id="shipmentList">
+            <!-- Shipment 1 - Delivered (newest) -->
+            <div class="shipment-card" data-status="delivered" onclick="viewShipment('SH-2026-042')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-042</span>
+                        <span class="status-badge status-delivered"><i class="fas fa-check-circle"></i> Delivered</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 30 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Mumbai</span>
+                            <span class="time">08:30 · 28 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Delhi</span>
+                            <span class="time">18:45 · 28 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 2.4T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> TransLogistics Pvt Ltd</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>T-422</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>2.4</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>1,400</strong> km</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹12,800</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); viewReceipt('SH-2026-042')">
+                        <i class="fas fa-receipt"></i> Receipt
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 2 - In Transit -->
+            <div class="shipment-card" data-status="in-transit" onclick="viewShipment('SH-2026-041')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-041</span>
+                        <span class="status-badge status-in-transit"><i class="fas fa-spinner fa-pulse"></i> In Transit</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 29 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Pune</span>
+                            <span class="time">09:15 · 29 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Bengaluru</span>
+                            <span class="time">17:30 · 29 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 1.1T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> SpeedCargo Express</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>SC-107</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>1.1</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>840</strong> km</span>
+                        <span class="meta-item" style="color: #3b82f6;"><i class="fas fa-map-marker-alt"></i> Near Kolhapur</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹7,600</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); trackShipment('SH-2026-041')">
+                        <i class="fas fa-map-pin"></i> Track
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 3 - Delivered -->
+            <div class="shipment-card" data-status="delivered" onclick="viewShipment('SH-2026-040')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-040</span>
+                        <span class="status-badge status-delivered"><i class="fas fa-check-circle"></i> Delivered</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 27 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Chennai</span>
+                            <span class="time">07:00 · 27 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Hyderabad</span>
+                            <span class="time">14:30 · 27 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 3.8T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> GreenHaul Logistics</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>GH-882</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>3.8</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>720</strong> km</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹9,400</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); viewReceipt('SH-2026-040')">
+                        <i class="fas fa-receipt"></i> Receipt
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 4 - Pending -->
+            <div class="shipment-card" data-status="pending" onclick="viewShipment('SH-2026-039')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-039</span>
+                        <span class="status-badge status-pending"><i class="fas fa-clock"></i> Pending</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 26 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Jaipur</span>
+                            <span class="time">10:00 · 26 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Delhi</span>
+                            <span class="time">13:30 · 26 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 0.8T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> NorthStar Freight</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>NS-045</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>0.8</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>280</strong> km</span>
+                        <span class="meta-item" style="color: #f59e0b;"><i class="fas fa-hourglass-half"></i> Awaiting confirmation</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹3,200</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); cancelShipment('SH-2026-039')" style="color: #ef4444; border-color: rgba(239,68,68,0.2);">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 5 - Delivered -->
+            <div class="shipment-card" data-status="delivered" onclick="viewShipment('SH-2026-038')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-038</span>
+                        <span class="status-badge status-delivered"><i class="fas fa-check-circle"></i> Delivered</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 24 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Kolkata</span>
+                            <span class="time">06:30 · 24 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Guwahati</span>
+                            <span class="time">16:00 · 24 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 2.0T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> EastWest Carriers</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>EW-331</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>2.0</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>1,120</strong> km</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹10,800</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); viewReceipt('SH-2026-038')">
+                        <i class="fas fa-receipt"></i> Receipt
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 6 - In Transit -->
+            <div class="shipment-card" data-status="in-transit" onclick="viewShipment('SH-2026-037')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-037</span>
+                        <span class="status-badge status-in-transit"><i class="fas fa-spinner fa-pulse"></i> In Transit</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 23 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Ahmedabad</span>
+                            <span class="time">08:00 · 23 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Mumbai</span>
+                            <span class="time">15:20 · 23 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 1.6T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> RapidTransit Co.</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>RT-256</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>1.6</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>530</strong> km</span>
+                        <span class="meta-item" style="color: #3b82f6;"><i class="fas fa-map-marker-alt"></i> Near Surat</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹6,500</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); trackShipment('SH-2026-037')">
+                        <i class="fas fa-map-pin"></i> Track
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 7 - Cancelled -->
+            <div class="shipment-card" data-status="cancelled" onclick="viewShipment('SH-2026-036')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-036</span>
+                        <span class="status-badge status-cancelled"><i class="fas fa-times-circle"></i> Cancelled</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 20 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Delhi</span>
+                            <span class="time">11:00 · 20 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Chandigarh</span>
+                            <span class="time">14:00 · 20 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 0.5T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> NorthStar Freight</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>NS-012</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>0.5</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>240</strong> km</span>
+                        <span class="meta-item" style="color: #ef4444;"><i class="fas fa-ban"></i> Cancelled by operator</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount" style="color: #64748b;">₹0</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); alert('This shipment was cancelled. Contact support for more info.')" style="color: #64748b;">
+                        <i class="fas fa-info-circle"></i> Details
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shipment 8 - Delivered (older) -->
+            <div class="shipment-card" data-status="delivered" onclick="viewShipment('SH-2026-035')">
+                <div class="shipment-main">
+                    <div class="shipment-top">
+                        <span class="shipment-id">#SH-2026-035</span>
+                        <span class="status-badge status-delivered"><i class="fas fa-check-circle"></i> Delivered</span>
+                        <span style="color: #64748b; font-size: 0.75rem;"><i class="far fa-calendar-alt"></i> 18 Aug 2026</span>
+                    </div>
+                    <div class="route-detail">
+                        <div class="stop">
+                            <span class="city">Mumbai</span>
+                            <span class="time">09:00 · 18 Aug</span>
+                        </div>
+                        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="stop">
+                            <span class="city">Pune</span>
+                            <span class="time">12:30 · 18 Aug</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 0.7rem; margin-left: 4px;">
+                            <i class="fas fa-box"></i> 1.2T
+                        </span>
+                    </div>
+                    <div class="shipment-meta">
+                        <span class="meta-item"><i class="fas fa-building"></i> SpeedCargo Express</span>
+                        <span class="meta-item"><i class="fas fa-truck"></i> <strong>SC-089</strong></span>
+                        <span class="meta-item"><i class="fas fa-weight-scale"></i> <strong>1.2</strong> tons</span>
+                        <span class="meta-item"><i class="fas fa-route"></i> <strong>150</strong> km</span>
+                    </div>
+                </div>
+                <div class="shipment-right">
+                    <span class="amount">₹3,800</span>
+                    <button class="action-btn" onclick="event.stopPropagation(); viewReceipt('SH-2026-035')">
+                        <i class="fas fa-receipt"></i> Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- load more (optional) -->
+        <div style="text-align: center; margin-top: 28px;">
+            <button class="btn btn-outline" onclick="loadMore()">
+                <i class="fas fa-chevron-down"></i> Load More
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- footer -->
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="logo" style="margin-bottom: 10px;">
+                <i class="fa-solid fa-truck-ramp-box"></i>
+                <span>HaulPool</span>
+            </div>
+            <p>The centralized deadhead elimination & en-route freight sharing network. Turning unladen transport capacity into shared cargo efficiency.</p>
+        </div>
+        <div>
+            <h3>For Truck Operators</h3>
+            <a href="#post">Publish Empty Leg</a>
+            <a href="#calculator">Fuel Cost Arbitrage</a>
+            <a href="#fleet">Fleet Telematics Sync</a>
+            <a href="#payouts">Instant Payout Rules</a>
+        </div>
+        <div>
+            <h3>For Cargo Shippers</h3>
+            <a href="#search">Corridor Space Search</a>
+            <a href="#partial">LTL & Pallet Rates</a>
+            <a href="#tracking">Real-Time Waypoint GPS</a>
+            <a href="#insurance">Transit Cargo Insurance</a>
+        </div>
+        <div>
+            <h3>Platform & Terms</h3>
+            <a href="#safety">Carrier Verification</a>
+            <a href="#compliance">DOT / FMCSA Compliance</a>
+            <a href="#privacy">Privacy & Route Security</a>
+            <a href="#support">24/7 Dispatch Support</a>
+        </div>
+    </div>
+    <hr>
+    <div class="footer-bottom">
+        <div>&copy; 2026 HaulPool Logistics Network Inc. All rights reserved.</div>
+        <div>Designed for Freight Optimizers & Transport Carriers</div>
+    </div>
+</footer>
+
+<!-- script -->
+<script>
+    // Track active filter
+    let activeFilter = 'all';
+
+    function filterShipments(filter) {
+        activeFilter = filter;
+        const cards = document.querySelectorAll('.shipment-card');
+        let visibleCount = 0;
+
+        // Update filter tags
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.classList.toggle('active', tag.dataset.filter === filter);
+        });
+
+        cards.forEach(card => {
+            const status = card.dataset.status;
+            const show = (filter === 'all' || status === filter);
+            card.style.display = show ? 'grid' : 'none';
+            if (show) visibleCount++;
+        });
+
+        document.getElementById('filterCount').textContent = `Showing ${visibleCount} shipments`;
+
+        // Update stats
+        updateStats();
+    }
+
+    function updateStats() {
+        const cards = document.querySelectorAll('.shipment-card');
+        let total = 0, delivered = 0, transit = 0, pending = 0, cancelled = 0;
+
+        cards.forEach(card => {
+            const status = card.dataset.status;
+            total++;
+            if (status === 'delivered') delivered++;
+            else if (status === 'in-transit') transit++;
+            else if (status === 'pending') pending++;
+            else if (status === 'cancelled') cancelled++;
+        });
+
+        document.getElementById('totalCount').textContent = total;
+        document.getElementById('deliveredCount').textContent = delivered;
+        document.getElementById('transitCount').textContent = transit;
+        document.getElementById('pendingCount').textContent = pending;
+        document.getElementById('cancelledCount').textContent = cancelled;
+    }
+
+    function viewShipment(id) {
+        alert(`📦 Shipment ${id}\n\nClick "Track" or "Receipt" for more details.`);
+    }
+
+    function viewReceipt(id) {
+        alert(`🧾 Receipt for ${id}\n\nAmount: ₹${Math.floor(Math.random() * 5000 + 3000)}\nDate: ${new Date().toLocaleDateString()}\nStatus: Paid ✓`);
+    }
+
+    function trackShipment(id) {
+        alert(`📍 Tracking ${id}\n\nCurrent location: In transit\nEstimated delivery: ${new Date(Date.now() + 86400000).toLocaleDateString()}`);
+    }
+
+    function cancelShipment(id) {
+        if (confirm(`Are you sure you want to cancel shipment ${id}?`)) {
+            const card = document.querySelector(`[data-status="pending"]`);
+            if (card) {
+                card.dataset.status = 'cancelled';
+                const badge = card.querySelector('.status-badge');
+                badge.className = 'status-badge status-cancelled';
+                badge.innerHTML = '<i class="fas fa-times-circle"></i> Cancelled';
+                // Update right side
+                const right = card.querySelector('.shipment-right');
+                right.querySelector('.amount').textContent = '₹0';
+                right.querySelector('.amount').style.color = '#64748b';
+                const btn = right.querySelector('.action-btn');
+                btn.textContent = ' Details';
+                btn.style.color = '#64748b';
+                btn.onclick = function(e) {
+                    e.stopPropagation();
+                    alert('This shipment was cancelled. Contact support for more info.');
+                };
+                updateStats();
+                filterShipments(activeFilter);
+                alert(`✅ Shipment ${id} has been cancelled.`);
+            }
+        }
+    }
+
+    function loadMore() {
+        alert('📦 Loading more shipments...\n\n(Simulated - all shipments are already displayed)');
+    }
+
+    // Initial stats
+    updateStats();
+
+    // Click on shipment card shows details
+    document.querySelectorAll('.shipment-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Don't trigger if clicking on a button
+            if (e.target.closest('.action-btn') || e.target.closest('.btn')) return;
+            const id = this.querySelector('.shipment-id')?.textContent || 'Shipment';
+            viewShipment(id);
+        });
+    });
+</script>
+
+</body>
+</html>

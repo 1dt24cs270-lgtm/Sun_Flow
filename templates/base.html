@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReHaul · freight network · dark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            background: radial-gradient(circle at 20% 10%, #0d1424, #070b14 90%);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        a { text-decoration: none; color: inherit; }
+        section { padding: 60px 8%; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* --- non-sticky header --- */
+        header {
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 163, 89, 0.25);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 50;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .logo i { color: #d4a359; font-size: 1.6rem; }
+        nav { display: flex; gap: 28px; font-weight: 600; color: #94a3b8; align-items: center; }
+        nav a { transition: 0.2s; padding: 4px 10px; border-radius: 30px; }
+        nav a:hover { color: #f3e5ca; background: rgba(212, 163, 89, 0.12); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn {
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+        }
+        .btn-outline { border: 1px solid rgba(212, 163, 89, 0.4); color: #f3e5ca; background: rgba(20,27,45,0.5); }
+        .btn-outline:hover { background: rgba(212, 163, 89, 0.15); border-color: #d4a359; transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(145deg, #d4a359, #b88232); color: #0a0e1a; box-shadow: 0 6px 16px rgba(212, 163, 89, 0.3); }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 28px rgba(212, 163, 89, 0.5); }
+
+        /* hero */
+        .hero {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            padding-top: 30px;
+            flex-wrap: wrap;
+        }
+        .hero-text { flex: 1.3; min-width: 300px; }
+        .hero-text .badge {
+            display: inline-block;
+            background: rgba(212, 163, 89, 0.12);
+            border: 1px solid rgba(212, 163, 89, 0.3);
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #f3e5ca;
+            margin-bottom: 22px;
+        }
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 54px;
+            line-height: 1.1;
+            background: linear-gradient(145deg, #fffdf7, #f3e5ca, #d4a359);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+        }
+        .hero-text p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        .hero-buttons { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 28px; }
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px 24px;
+            font-weight: 500;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+        .hero-features i { color: #10b981; margin-right: 8px; }
+
+        /* vertical long card – hero right */
+        .hero-card {
+            flex: 1;
+            max-width: 460px;
+            min-width: 280px;
+            background: rgba(14, 22, 40, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 163, 89, 0.25);
+            border-radius: 32px;
+            padding: 36px 28px 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 20px rgba(212, 163, 89, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .hero-card:hover { border-color: #d4a359; transform: translateY(-6px); box-shadow: 0 28px 60px rgba(0,0,0,0.7), 0 0 30px rgba(212, 163, 89, 0.15); }
+        .hero-card .card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(212, 163, 89, 0.2);
+            padding-bottom: 16px;
+        }
+        .card-title h3 { font-family: 'Playfair Display', serif; color: #f3e5ca; font-size: 1.3rem; }
+        .card-title span { color: #10b981; font-size: 0.7rem; background: rgba(16,185,129,0.12); padding: 4px 12px; border-radius: 40px; font-weight: 700; }
+        .trip-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 12, 24, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.08);
+            border-radius: 18px;
+            padding: 14px 18px;
+            transition: 0.2s;
+        }
+        .trip-row:hover { border-color: rgba(212, 163, 89, 0.4); background: rgba(20, 30, 50, 0.7); }
+        .trip-row .label { color: #94a3b8; font-size: 0.8rem; font-weight: 500; }
+        .trip-row .value { color: #d4a359; font-weight: 700; font-family: monospace; font-size: 1rem; }
+        .trip-row .value i { color: #f3e5ca; margin-right: 6px; }
+        .trip-highlight {
+            background: rgba(212, 163, 89, 0.06);
+            border-left: 4px solid #d4a359;
+            padding: 14px 16px;
+            border-radius: 14px;
+            margin: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .trip-highlight .small { font-size: 0.75rem; color: #94a3b8; }
+        .trip-highlight .big { font-weight: 700; color: #f3e5ca; }
+
+        /* stat section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 22px;
+            margin: 20px 0 10px;
+        }
+        .stat-item {
+            background: rgba(14, 22, 40, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            border-radius: 24px;
+            padding: 28px 12px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: default;
+        }
+        .stat-item:hover { border-color: #d4a359; transform: translateY(-6px); background: rgba(24, 34, 60, 0.9); }
+        .stat-item h2 { font-family: 'Playfair Display', serif; font-size: 40px; color: #f3e5ca; }
+        .stat-item p { color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; font-size: 0.8rem; }
+
+        /* detailed explanation cards (vertical long) */
+        .explain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .explain-card {
+            background: rgba(12, 20, 38, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            border-radius: 28px;
+            padding: 32px 24px 28px;
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+        .explain-card:hover { transform: translateY(-8px); border-color: #d4a359; background: rgba(22, 34, 60, 0.9); }
+        .explain-card i { font-size: 2.4rem; color: #d4a359; margin-bottom: 18px; }
+        .explain-card h3 { font-size: 1.3rem; color: #f8fafc; margin-bottom: 12px; }
+        .explain-card p { color: #94a3b8; line-height: 1.7; font-size: 0.95rem; flex: 1; }
+        .explain-card .foot { margin-top: 16px; color: #d4a359; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
+
+        /* timeline / route */
+        .route-timeline {
+            background: rgba(12, 20, 38, 0.7);
+            border-radius: 32px;
+            padding: 40px 32px;
+            border: 1px solid rgba(212, 163, 89, 0.2);
+            margin-top: 30px;
+        }
+        .route-stops {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .route-stops::before {
+            content: '';
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, #d4a359, #3b82f6, #10b981, #d4a359);
+            top: 28px;
+            left: 5%;
+            width: 90%;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        .stop {
+            background: rgba(7, 12, 24, 0.9);
+            border: 1px solid rgba(212, 163, 89, 0.3);
+            padding: 12px 20px;
+            border-radius: 30px;
+            z-index: 2;
+            text-align: center;
+            min-width: 100px;
+            transition: 0.2s;
+            cursor: default;
+        }
+        .stop:hover { border-color: #d4a359; background: #1a2740; }
+        .stop .dot { width: 18px; height: 18px; background: #d4a359; border-radius: 50%; margin: 0 auto 10px; border: 3px solid #0f172a; box-shadow: 0 0 0 2px rgba(212, 163, 89, 0.3); }
+        .stop h4 { color: #f3e5ca; font-size: 0.9rem; }
+        .stop p { color: #94a3b8; font-size: 0.7rem; font-family: monospace; }
+
+        /* cta */
+        .cta-block {
+            background: linear-gradient(145deg, rgba(20, 32, 56, 0.9), rgba(8, 14, 26, 0.95));
+            border: 1px solid rgba(212, 163, 89, 0.3);
+            border-radius: 36px;
+            padding: 60px 40px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .cta-block h2 { font-family: 'Playfair Display', serif; font-size: 38px; color: #f3e5ca; }
+        .cta-block p { color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 16px auto 28px; }
+
+        /* === FOOTER (exactly as requested) === */
+        footer {
+            background: #060b16;
+            border-top: 1px solid rgba(212, 163, 89, 0.15);
+            padding: 60px 8% 40px;
+            margin-top: 40px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 35px;
+            margin-bottom: 30px;
+        }
+        .footer-grid .logo {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f3e5ca;
+        }
+        .footer-grid .logo i { color: #d4a359; font-size: 1.4rem; }
+        .footer-grid p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 6px;
+        }
+        .footer-grid h3 {
+            color: #f3e5ca;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            letter-spacing: 0.3px;
+        }
+        .footer-grid a {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 8px 0;
+            transition: color 0.2s ease;
+        }
+        .footer-grid a:hover {
+            color: #d4a359;
+        }
+        footer hr {
+            border: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 20px 0;
+        }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer-bottom div:last-child {
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        /* responsive */
+        @media (max-width: 1100px) {
+            .stats-grid { grid-template-columns: repeat(2,1fr); }
+            .explain-grid { grid-template-columns: repeat(2,1fr); }
+            .footer-grid { grid-template-columns: repeat(2,1fr); }
+            .hero { flex-direction: column; }
+            .hero-card { max-width: 100%; }
+        }
+        @media (max-width: 700px) {
+            .explain-grid, .stats-grid, .footer-grid { grid-template-columns: 1fr; }
+            .hero-text h1 { font-size: 38px; }
+            nav { display: none; }
+            .route-stops { flex-direction: column; gap: 20px; }
+            .route-stops::before { display: none; }
+            .cta-block { padding: 40px 20px; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- non-sticky header -->
+<header>
+    <div class="logo">
+        <i class="fas fa-truck-fast"></i>
+        <span>ReHaul</span>
+    </div>
+    <nav>
+        <a href="#"><i class="fas fa-calendar"></i> Schedules</a>
+        <a href="#"><i class="fas fa-map-pin"></i> Routes</a>
+        <a href="#"><i class="fas fa-box"></i> Cargo</a>
+        <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="#"><i class="fas fa-users"></i> Network</a>
+    </nav>
+    <div class="header-actions">
+        <a href="{{ url_for('auth.customer_signin') }}" class="btn btn-outline"><i class="fas fa-right-to-bracket"></i> Login</a>
+        <a href="{{ url_for('auth.operator_signup') }}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Post Trip</a>
+    </div>
+</header>
+
+<!-- hero -->
+<section>
+    <div class="hero container">
+        <div class="hero-text">
+            <div class="badge"><i class="fas fa-rotate-left"></i> eliminate empty return · fuel‑smart logistics</div>
+            <h1>Turn deadhead miles into profit</h1>
+            <p>Transport operators publish their schedules — start, destination, strict time windows. 
+            Anyone with cargo along the route can book space instantly. Maximize fuel, cut waste, 
+            and earn more from every trip.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('auth.customer_signin') }}" class="btn btn-primary"><i class="fas fa-magnifying-glass"></i> Find Available Trucks</a>
+                <a href="{{ url_for('auth.operator_signup') }}" class="btn btn-outline"><i class="fas fa-route"></i> Plan a Route</a>
+            </div>
+            <div class="hero-features">
+                <div><i class="fas fa-check-circle"></i> real‑time capacity</div>
+                <div><i class="fas fa-check-circle"></i> strict time adherence</div>
+                <div><i class="fas fa-check-circle"></i> transparent pricing</div>
+                <div><i class="fas fa-check-circle"></i> operator verified</div>
+            </div>
+        </div>
+
+        <!-- vertical long card -->
+        <div class="hero-card">
+            <div class="card-title">
+                <h3><i class="fas fa-truck" style="color: #d4a359; margin-right: 8px;"></i> active trip · today</h3>
+                <span>live</span>
+            </div>
+            <div class="trip-row">
+                <span class="label"><i class="fas fa-flag-checkered"></i> start</span>
+                <span class="value">Mumbai · 08:30</span>
+            </div>
+            <div class="trip-row">
+                <span class="label"><i class="fas fa-location-dot"></i> destination</span>
+                <span class="value">Delhi · 18:45</span>
+            </div>
+            <div class="trip-row">
+                <span class="label"><i class="fas fa-weight-scale"></i> free capacity</span>
+                <span class="value">2.4 tons</span>
+            </div>
+            <div class="trip-highlight">
+                <span><span class="small">intermediate stop</span><br><span class="big">Jaipur · 13:20</span></span>
+                <span><i class="fas fa-box" style="color: #d4a359;"></i> 3 slots</span>
+            </div>
+            <div class="trip-highlight" style="border-left-color: #3b82f6; background: rgba(59,130,246,0.04);">
+                <span><span class="small">return leg · already booked</span><br><span class="big">70% filled</span></span>
+                <span style="color: #10b981;"><i class="fas fa-arrow-right"></i> profit +₹4,200</span>
+            </div>
+            <div style="margin-top: 8px; text-align: right; font-size: 0.75rem; color: #64748b;">
+                <i class="fas fa-clock"></i> departure in 2h 15m
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- stats -->
+<section style="padding-top: 0;">
+    <div class="stats-grid container">
+        <div class="stat-item"><h2>148</h2><p>active schedules</p></div>
+        <div class="stat-item"><h2>62%</h2><p>average fill rate</p></div>
+        <div class="stat-item"><h2>2.8k</h2><p>tons moved</p></div>
+        <div class="stat-item"><h2>₹6.4L</h2><p>operator extra profit</p></div>
+    </div>
+</section>
+
+<!-- detailed explanation cards (vertical long) -->
+<section>
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 38px; color: #f3e5ca;">How it works</h2>
+        <p style="color: #94a3b8; font-size: 1.05rem;">Transparent schedules, strict time windows, cargo matched along the way</p>
+    </div>
+    <div class="explain-grid container">
+        <div class="explain-card">
+            <i class="fas fa-calendar-clock"></i>
+            <h3>1. Operator publishes schedule</h3>
+            <p>Start point, destination, departure &amp; arrival times, free weight/volume. All visible on the network. Return trips are listed with the same clarity.</p>
+            <div class="foot"><i class="fas fa-arrow-right"></i> strict time criteria</div>
+        </div>
+        <div class="explain-card">
+            <i class="fas fa-route"></i>
+            <h3>2. Cargo matching along the path</h3>
+            <p>Anyone with goods that need to go to the destination — or any stop en route — can claim the space. Automated route optimisation suggests best fits.</p>
+            <div class="foot"><i class="fas fa-arrow-right"></i> intermediate drops allowed</div>
+        </div>
+        <div class="explain-card">
+            <i class="fas fa-coins"></i>
+            <h3>3. Shared fuel, shared profit</h3>
+            <p>Operators cover fuel costs with multiple payloads; cargo owners pay less than dedicated transport. Everyone wins — and the environment too.</p>
+            <div class="foot"><i class="fas fa-arrow-right"></i> better fuel economy</div>
+        </div>
+    </div>
+</section>
+
+<!-- timeline / route visual -->
+<section style="padding-top: 0;">
+    <div class="route-timeline container">
+        <h3 style="font-family: 'Playfair Display', serif; color: #f3e5ca; font-size: 1.6rem; text-align: center;">sample route with stops</h3>
+        <p style="text-align: center; color: #94a3b8; margin-bottom: 6px;">truck T-422 · today · 08:30 → 18:45</p>
+        <div class="route-stops">
+            <div class="stop"><div class="dot"></div><h4>Mumbai</h4><p>08:30 · load</p></div>
+            <div class="stop"><div class="dot" style="background: #3b82f6;"></div><h4>Surat</h4><p>10:10 · drop</p></div>
+            <div class="stop"><div class="dot" style="background: #10b981;"></div><h4>Vadodara</h4><p>11:50 · pick</p></div>
+            <div class="stop"><div class="dot" style="background: #d4a359;"></div><h4>Jaipur</h4><p>13:20 · drop/pick</p></div>
+            <div class="stop"><div class="dot"></div><h4>Delhi</h4><p>18:45 · final</p></div>
+        </div>
+        <p style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 24px;"><i class="fas fa-circle-info"></i> any cargo can be added to any stop along the path, subject to time &amp; capacity</p>
+    </div>
+</section>
+
+<!-- cta -->
+<section>
+    <div class="cta-block container">
+        <h2>Ready to optimise your return journey or pool cargo?</h2>
+        <p>List your truck schedule or find cargo that fits your route. Transparent, fast, and profitable.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;">
+            <a href="#" class="btn btn-primary"><i class="fas fa-truck"></i> I'm an operator</a>
+            <a href="#" class="btn btn-outline"><i class="fas fa-boxes"></i> I have cargo</a>
+            <a href="#" class="btn btn-outline"><i class="fas fa-map"></i> Explore routes</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER (exactly as you requested, with the ReHaul brand) ===== -->
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="logo" style="margin-bottom: 14px;">
+                <i class="fa-solid fa-truck-ramp-box"></i>
+                <span>ReHaul</span>
+            </div>
+            <p>The centralized deadhead elimination & en-route freight sharing network. Turning unladen transport capacity into shared cargo efficiency.</p>
+        </div>
+
+        <div>
+            <h3>For Truck Operators</h3>
+            <a href="#post">Publish Empty Leg</a>
+            <a href="#calculator">Fuel Cost Arbitrage</a>
+            <a href="#fleet">Fleet Telematics Sync</a>
+            <a href="#payouts">Instant Payout Rules</a>
+        </div>
+
+        <div>
+            <h3>For Cargo Shippers</h3>
+            <a href="#search">Corridor Space Search</a>
+            <a href="#partial">LTL & Pallet Rates</a>
+            <a href="#tracking">Real-Time Waypoint GPS</a>
+            <a href="#insurance">Transit Cargo Insurance</a>
+        </div>
+
+        <div>
+            <h3>Platform & Terms</h3>
+            <a href="#safety">Carrier Verification</a>
+            <a href="#compliance">DOT / FMCSA Compliance</a>
+            <a href="#privacy">Privacy & Route Security</a>
+            <a href="#support">24/7 Dispatch Support</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="footer-bottom">
+        <div>&copy; 2026 ReHaul Logistics Network Inc. All rights reserved.</div>
+        <div>Designed for Freight Optimizers & Transport Carriers</div>
+    </div>
+</footer>
+
+<!-- ripple effect script -->
+<script>
+    document.querySelectorAll('.btn, .explain-card, .stat-item, .trip-row, .stop').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (this.tagName === 'A' && this.href) return;
+            const ripple = document.createElement('span');
+            ripple.style.cssText = 'position:absolute; border-radius:50%; background:rgba(212,163,89,0.3); width:80px; height:80px; transform:scale(0); animation:rippleAnim 0.6s ease-out; pointer-events:none;';
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = `@keyframes rippleAnim { to { transform: scale(2.5); opacity: 0; } }`;
+    document.head.appendChild(styleSheet);
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

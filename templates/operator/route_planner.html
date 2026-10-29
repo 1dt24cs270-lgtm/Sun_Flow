@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HaulPool | Multi-Stop Route & Waypoint Scheduler</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-dark: #070c18;
+      --bg-surface: #0e1628;
+      --bg-card: rgba(17, 24, 42, 0.9);
+      --bg-card-hover: rgba(23, 33, 58, 0.98);
+      --bg-input: #090e1a;
+      --border-color: rgba(245, 158, 11, 0.25);
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --primary: #f59e0b;
+      --primary-dark: #d97706;
+      --primary-glow: rgba(245, 158, 11, 0.35);
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 12% 18%, #142344 0%, #070c18 50%, #030610 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* NON-STICKY GLOBAL HEADER */
+    header {
+      position: static;
+      width: 100%;
+      padding: 22px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(11, 17, 32, 0.98);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 8px var(--primary-glow));
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .header-nav a {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-nav a:hover {
+      color: var(--primary);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* SPECIFICALLY HIGHLIGHTED ACTIVE POST ROUTE HEADER OPTION */
+    .header-nav a.nav-active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
+      color: #fde68a;
+      border: 1px solid var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+      font-weight: 700;
+    }
+
+    .operator-profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 40px;
+    }
+
+    .operator-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #070c18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .operator-info-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .operator-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fde68a;
+    }
+
+    .operator-status {
+      font-size: 0.7rem;
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTAINER */
+    .route-builder-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 30px 6%;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* HERO BANNER */
+    .route-hero {
+      background: linear-gradient(135deg, rgba(20, 31, 56, 0.9), rgba(11, 17, 32, 0.95));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-title h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .hero-title h1 span {
+      background: linear-gradient(135deg, #fde68a, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 650px;
+    }
+
+    .route-corridor-pill {
+      background: rgba(7, 12, 24, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px 22px;
+      text-align: right;
+    }
+
+    .route-corridor-pill span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .route-corridor-pill h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      color: #fde68a;
+      margin-top: 4px;
+    }
+
+    /* 2-COLUMN BUILDER WORKSPACE */
+    .builder-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    /* LEFT COLUMN: MULTI-STOP INTAKE FORM */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .section-tag {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      color: #fde68a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+      padding-bottom: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group label span.helper {
+      font-size: 0.72rem;
+      color: var(--primary);
+      text-transform: none;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap i {
+      position: absolute;
+      left: 14px;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 11px 12px 11px 40px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+      background: #0e1526;
+    }
+
+    .form-control.no-icon {
+      padding-left: 14px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* DYNAMIC WAYPOINT CARDS INTAKE */
+    .waypoint-stops-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 10px 0;
+    }
+
+    .stop-entry-card {
+      background: rgba(14, 22, 38, 0.9);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .stop-entry-card:hover {
+      border-color: var(--accent-cyan);
+    }
+
+    .stop-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .stop-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-remove-stop {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+
+    .btn-remove-stop:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-add-stop {
+      background: rgba(6, 182, 212, 0.12);
+      border: 1.5px dashed var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      margin-bottom: 10px;
+    }
+
+    .btn-add-stop:hover {
+      background: rgba(6, 182, 212, 0.22);
+      transform: translateY(-2px);
+    }
+
+    /* SUBMIT ACTION */
+    .btn-submit-corridor {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #070c18;
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+      box-shadow: 0 4px 18px var(--primary-glow);
+      margin-top: 10px;
+    }
+
+    .btn-submit-corridor:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 26px rgba(245, 158, 11, 0.55);
+    }
+
+    /* RIGHT COLUMN: REAL-TIME ROUTE TIMELINE VISUALIZER */
+    .preview-sticky-wrap {
+      position: static;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .preview-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .preview-head {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-head h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      color: #fde68a;
+    }
+
+    .live-sync-tag {
+      font-size: 0.72rem;
+      color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Long Stepper Graphic for Staged Stops */
+    .timeline-stream {
+      position: relative;
+      padding-left: 28px;
+      margin: 20px 0;
+      border-left: 2px dashed rgba(245, 158, 11, 0.35);
+    }
+
+    .stream-stop {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .stream-stop:last-child {
+      margin-bottom: 0;
+    }
+
+    .stream-stop::before {
+      content: '';
+      position: absolute;
+      left: -35px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 2px solid var(--primary);
+    }
+
+    .stream-stop.intermediate::before {
+      border-color: var(--accent-cyan);
+      background: #0e1628;
+    }
+
+    .stream-stop.final-dest::before {
+      border-color: var(--accent-green);
+      background: var(--accent-green);
+    }
+
+    .stop-place-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: #ffffff;
+    }
+
+    .stop-meta-line {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 3px;
+    }
+
+    .stop-badge-pill {
+      display: inline-block;
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .badge-drop {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .badge-both {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .badge-rest {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .corridor-stats-summary {
+      background: rgba(9, 14, 26, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-top: 18px;
+    }
+
+    .corridor-stats-summary div {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .corridor-stats-summary strong {
+      color: #fde68a;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #141f38;
+      color: #fde68a;
+      border: 1px solid var(--primary);
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FOOTER */
+    footer {
+      background: #030712;
+      border-top: 1px solid var(--border-color);
+      padding: 60px 6% 30px;
+      color: #94a3b8;
+      margin-top: 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-grid h3 {
+      color: #fde68a;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .footer-grid a {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      display: block;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .footer-grid a:hover {
+      color: var(--primary);
+    }
+
+    footer hr {
+      border: none;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .builder-layout { grid-template-columns: 1fr; }
+      .route-hero { flex-direction: column; text-align: center; }
+      .route-corridor-pill { text-align: center; }
+    }
+
+    @media (max-width: 700px) {
+      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .header-nav { display: none; }
+      .route-hero h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo" onclick="window.location.reload()">
+      <i class="fa-solid fa-truck-ramp-box"></i>
+      <span>HaulPool <small style="font-size: 0.65rem; color: var(--primary); letter-spacing: 1px; font-weight: 700; text-transform: uppercase;">Operator Console</small></span>
+    </div>
+
+    <nav class="header-nav">
+      <a href="#" class="nav-active"><i class="fa-solid fa-route"></i> Post Return Route</a>
+      <a href="operator.html"><i class="fa-solid fa-layer-group"></i> Hosted Corridors</a>
+      <a href="#"><i class="fa-solid fa-gas-pump"></i> Fuel Offset Index</a>
+      <a href="#"><i class="fa-solid fa-headset"></i> Carrier Dispatch</a>
+    </nav>
+
+    <div class="operator-profile-pill">
+      <div class="operator-avatar">
+        <i class="fa-solid fa-id-badge"></i>
+      </div>
+      <div class="operator-info-meta">
+        <span class="operator-name">CARRIER DISPATCH DESK</span>
+        <span class="operator-status"><i class="fa-solid fa-circle-check"></i> Multi-Stop Protocol Active</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="route-builder-container">
+
+    <section class="route-hero">
+      <div class="hero-title">
+        <h1>Multi-Stop Corridor: <span>Route & Waypoint Builder</span></h1>
+        <p>Define multi-city highway corridors (e.g. Mumbai to Bangalore with Pune, Kolhapur & Hubballi intercepts) so regional shippers can book partial space along every node.</p>
+      </div>
+
+      <div class="route-corridor-pill">
+        <span>Active Corridor Preview</span>
+        <h3 id="heroCorridorDisplay">Mumbai &rarr; Bangalore</h3>
+      </div>
+    </section>
+
+    <div class="builder-layout">
+
+      <div class="form-card">
+        <div class="section-tag">
+          <span><i class="fa-solid fa-location-crosshairs"></i> 1. Terminal Start & End Points</span>
+          <span style="font-size: 0.75rem; color: var(--primary);">Primary Spine</span>
+        </div>
+
+        <form id="corridorForm" onsubmit="handleCorridorPublish(event)">
+          
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>
+                Origin / Start Terminal
+                <span class="helper">Departure location</span>
+              </label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-circle-dot"></i>
+                <input type="text" id="originCity" class="form-control" placeholder="e.g. Mumbai (JNPT Port Hub)" value="Mumbai (JNPT Hub)" oninput="updateLivePreview()" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Departure Date & Time</label>
+              <input type="datetime-local" id="originTime" class="form-control no-icon" oninput="updateLivePreview()" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>
+                Final Destination Terminal
+                <span class="helper">Unloading destination</span>
+              </label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-flag-checkered" style="color: var(--accent-green);"></i>
+                <input type="text" id="destinationCity" class="form-control" placeholder="e.g. Bangalore (Peenya Industrial Area)" value="Bangalore (Peenya Area)" oninput="updateLivePreview()" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Estimated Final Arrival</label>
+              <input type="datetime-local" id="destinationTime" class="form-control no-icon" oninput="updateLivePreview()" required />
+            </div>
+          </div>
+
+          <div class="section-tag" style="margin-top: 10px;">
+            <span><i class="fa-solid fa-code-branch"></i> 2. Intermediate Waypoint Stops (<span id="stopCountDisplay">5</span> Stops Configured)</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">En-route Drops & Pickups</span>
+          </div>
+
+          <div class="waypoint-stops-stack" id="stopsContainer">
+            </div>
+
+          <button type="button" class="btn-add-stop" onclick="addNewWaypointStop()">
+            <i class="fa-solid fa-circle-plus"></i> Add Another Intermediate Waypoint Stop
+          </button>
+
+          <div class="section-tag" style="margin-top: 10px;">
+            <span><i class="fa-solid fa-truck-moving"></i> 3. Fleet & Space Parameters</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Space Availability</span>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label>Available Weight</label>
+              <input type="text" id="corridorWeight" class="form-control no-icon" placeholder="e.g. 14,000 kg" value="14,000 kg" oninput="updateLivePreview()" required />
+            </div>
+
+            <div class="form-group">
+              <label>Pallet Capacity</label>
+              <input type="text" id="corridorPallets" class="form-control no-icon" placeholder="e.g. 18 Pallets" value="18 Pallets (60% Open)" oninput="updateLivePreview()" required />
+            </div>
+
+            <div class="form-group">
+              <label>Vehicle Configuration</label>
+              <select id="corridorVehicle" class="form-control no-icon" onchange="updateLivePreview()" required>
+                <option value="32' Multi-Axle Container">32' Multi-Axle Container</option>
+                <option value="40' Semi-Trailer Heavy Flatbed">40' Semi-Trailer Heavy Flatbed</option>
+                <option value="Refrigerated Cold Chain Reefer">Refrigerated Cold Chain Reefer</option>
+                <option value="24' Heavy Goods Truck">24' Heavy Goods Truck</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit-corridor">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Multi-Stop Corridor Live
+          </button>
+        </form>
+      </div>
+
+      <div class="preview-sticky-wrap">
+        <div class="preview-panel">
+          <div class="preview-head">
+            <h3><i class="fa-solid fa-route"></i> Live Route Stepper Preview</h3>
+            <div class="live-sync-tag">
+              <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> LIVE SYNC
+            </div>
+          </div>
+
+          <div class="timeline-stream" id="previewTimelineStream">
+            </div>
+
+          <div class="corridor-stats-summary">
+            <div>
+              <span>Total Route Nodes:</span>
+              <strong id="summaryNodes">7 Total Points</strong>
+            </div>
+            <div>
+              <span>Vehicle Class:</span>
+              <strong id="summaryVehicle">32' Multi-Axle Container</strong>
+            </div>
+            <div>
+              <span>Remaining Payload:</span>
+              <strong id="summaryWeight">14,000 kg</strong>
+            </div>
+            <div>
+              <span>Deadhead Arbitrage Status:</span>
+              <strong style="color: var(--accent-green);">Optimized for En-Route Freight</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast" id="routeToast">
+    <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i>
+    <span id="toastMessage">Corridor and all intermediate stops published successfully!</span>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom: 14px;">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <span>HaulPool</span>
+        </div>
+        <p>Carrier Yield Optimization Network. Connecting backhaul deadhead runs with high-density waypoint shippers to maximize route profitability.</p>
+      </div>
+
+      <div>
+        <h3>Operator Publishing</h3>
+        <a href="operator-post-route.html">Multi-Stop Route Builder</a>
+        <a href="operator.html">Active Hosted Corridors</a>
+        <a href="#">Junction Layover Tolerances</a>
+        <a href="#">En-Route Intercept Rules</a>
+      </div>
+
+      <div>
+        <h3>Carrier Escrow & Payouts</h3>
+        <a href="#">Instant Fuel Card Release</a>
+        <a href="#">Multi-Drop POD Verification</a>
+        <a href="#">Detour Detention Compensation</a>
+        <a href="#">Cargo Insurance Standard</a>
+      </div>
+
+      <div>
+        <h3>Compliance & Safety</h3>
+        <a href="#">National Highway Authority Sync</a>
+        <a href="#">Electronic e-Way Bill Integration</a>
+        <a href="#">24/7 Dispatch Control Room</a>
+        <a href="#">Terms of Route Carriage</a>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 HaulPool Technologies Inc. Operator Console &bull; Verified Fleet Network</div>
+      <div>Zero Deadhead Carbon Reduction Standard</div>
+    </div>
+  </footer>
+
+  <script>
+    // Initial dynamic state representing stops along the Mumbai - Bangalore corridor
+    let waypointStops = [
+      { id: 1, location: 'Pune (Bypass Junction)', timeOffset: '+3 Hours from start', duration: '+45 Mins Layover', type: 'Drop & Pickup' },
+      { id: 2, location: 'Kolhapur (Shiroli MIDC)', timeOffset: '+6 Hours from start', duration: '+30 Mins Layover', type: 'Cargo Drop-Off' },
+      { id: 3, location: 'Belagavi (Highway Depot)', timeOffset: '+8 Hours from start', duration: '+30 Mins Layover', type: 'Cargo Pickup' },
+      { id: 4, location: 'Hubballi (Gabbur Toll Hub)', timeOffset: '+10 Hours from start', duration: '+1 Hour Driver Break & Load', type: 'Drop & Pickup' },
+      { id: 5, location: 'Davanagere (Bypass Flyover)', timeOffset: '+13 Hours from start', duration: '+20 Mins Quick Halt', type: 'Cargo Drop-Off' }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize default departure / arrival timestamps
+      const now = new Date();
+      now.setHours(now.getHours() + 2);
+      document.getElementById('originTime').value = now.toISOString().slice(0, 16);
+
+      const arrival = new Date(now);
+      arrival.setHours(arrival.getHours() + 18);
+      document.getElementById('destinationTime').value = arrival.toISOString().slice(0, 16);
+
+      renderWaypointForms();
+      updateLivePreview();
+    });
+
+    // Render input cards for each intermediate stop
+    function renderWaypointForms() {
+      const container = document.getElementById('stopsContainer');
+      document.getElementById('stopCountDisplay').textContent = waypointStops.length;
+
+      container.innerHTML = waypointStops.map((stop, index) => `
+        <div class="stop-entry-card">
+          <div class="stop-header">
+            <div class="stop-title">
+              <i class="fa-solid fa-location-dot"></i> Stop #${index + 1}: Intermediate Waypoint
+            </div>
+            <button type="button" class="btn-remove-stop" onclick="removeWaypointStop(${stop.id})">
+              <i class="fa-solid fa-trash-can"></i> Remove Stop
+            </button>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Stop / Junction Name</label>
+              <input type="text" class="form-control no-icon" value="${escapeHtml(stop.location)}" oninput="updateStopData(${stop.id}, 'location', this.value)" placeholder="e.g. Pune Bypass Flyover" required />
+            </div>
+
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Estimated Arrival / Offset</label>
+              <input type="text" class="form-control no-icon" value="${escapeHtml(stop.timeOffset)}" oninput="updateStopData(${stop.id}, 'timeOffset', this.value)" placeholder="e.g. +3 Hours from departure" required />
+            </div>
+
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Layover / Halt Duration</label>
+              <select class="form-control no-icon" onchange="updateStopData(${stop.id}, 'duration', this.value)">
+                <option value="+15 Mins Quick Halt" ${stop.duration.includes('15 Mins') ? 'selected' : ''}>+15 Mins Quick Halt</option>
+                <option value="+30 Mins Layover" ${stop.duration.includes('30 Mins') ? 'selected' : ''}>+30 Mins Standard Layover</option>
+                <option value="+45 Mins Layover" ${stop.duration.includes('45 Mins') ? 'selected' : ''}>+45 Mins Loading Layover</option>
+                <option value="+1 Hour Buffer" ${stop.duration.includes('1 Hour') ? 'selected' : ''}>+1 Hour Loading Buffer</option>
+                <option value="+2 Hours Flexible Halt" ${stop.duration.includes('2 Hours') ? 'selected' : ''}>+2 Hours Flexible Layover</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
+            <label>Permitted Stopover Action</label>
+            <select class="form-control no-icon" onchange="updateStopData(${stop.id}, 'type', this.value)">
+              <option value="Drop & Pickup" ${stop.type === 'Drop & Pickup' ? 'selected' : ''}>Both Partial Drop-Off & New Pickup Allowed</option>
+              <option value="Cargo Drop-Off" ${stop.type === 'Cargo Drop-Off' ? 'selected' : ''}>Cargo Drop-Off Only</option>
+              <option value="Cargo Pickup" ${stop.type === 'Cargo Pickup' ? 'selected' : ''}>Cargo Pickup Only</option>
+              <option value="Driver Rest Hub" ${stop.type === 'Driver Rest Hub' ? 'selected' : ''}>Driver Rest / Fuel Refill Halt (No Handling)</option>
+            </select>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Add a new intermediate stop
+    function addNewWaypointStop() {
+      const newId = Date.now();
+      waypointStops.push({
+        id: newId,
+        location: 'New Highway Junction Point',
+        timeOffset: '+Hours from start',
+        duration: '+30 Mins Layover',
+        type: 'Drop & Pickup'
+      });
+      renderWaypointForms();
+      updateLivePreview();
+    }
+
+    // Remove a waypoint stop
+    function removeWaypointStop(id) {
+      waypointStops = waypointStops.filter(s => s.id !== id);
+      renderWaypointForms();
+      updateLivePreview();
+    }
+
+    // Update stop attributes on the fly
+    function updateStopData(id, field, value) {
+      const stop = waypointStops.find(s => s.id === id);
+      if (stop) {
+        stop[field] = value;
+        updateLivePreview();
+      }
+    }
+
+    // Synchronize and render the visual timeline stream on the right
+    function updateLivePreview() {
+      const origin = document.getElementById('originCity').value.trim() || 'Origin Departure Terminal';
+      const dest = document.getElementById('destinationCity').value.trim() || 'Final Destination Terminal';
+      const vehicle = document.getElementById('corridorVehicle').value;
+      const weight = document.getElementById('corridorWeight').value;
+
+      document.getElementById('heroCorridorDisplay').textContent = `${origin.split('(')[0]} ➔ ${dest.split('(')[0]}`;
+      document.getElementById('summaryVehicle').textContent = vehicle;
+      document.getElementById('summaryWeight').textContent = weight;
+      document.getElementById('summaryNodes').textContent = `${waypointStops.length + 2} Total Points`;
+
+      const stream = document.getElementById('previewTimelineStream');
+
+      let timelineHtml = `
+        <div class="stream-stop">
+          <div class="stop-place-name">${escapeHtml(origin)}</div>
+          <div class="stop-meta-line">Primary Origin Departure</div>
+          <span class="stop-badge-pill badge-rest">Start Node</span>
+        </div>
+      `;
+
+      // Render intermediate stops
+      waypointStops.forEach((stop, i) => {
+        let badgeClass = 'badge-drop';
+        if (stop.type.includes('Pickup')) badgeClass = 'badge-both';
+        if (stop.type.includes('Rest')) badgeClass = 'badge-rest';
+
+        timelineHtml += `
+          <div class="stream-stop intermediate">
+            <div class="stop-place-name">Stop #${i + 1}: ${escapeHtml(stop.location)}</div>
+            <div class="stop-meta-line">${escapeHtml(stop.timeOffset)} &bull; ${escapeHtml(stop.duration)}</div>
+            <span class="stop-badge-pill ${badgeClass}">${escapeHtml(stop.type)}</span>
+          </div>
+        `;
+      });
+
+      // Destination Point
+      timelineHtml += `
+        <div class="stream-stop final-dest">
+          <div class="stop-place-name">${escapeHtml(dest)}</div>
+          <div class="stop-meta-line">Final Destination Terminal Drop</div>
+          <span class="stop-badge-pill badge-drop" style="background:rgba(16,185,129,0.15); color:var(--accent-green); border-color:rgba(16,185,129,0.3);">Terminus Hub</span>
+        </div>
+      `;
+
+      stream.innerHTML = timelineHtml;
+    }
+
+    // Handle full corridor submission
+    function handleCorridorPublish(e) {
+      e.preventDefault();
+      const origin = document.getElementById('originCity').value;
+      const dest = document.getElementById('destinationCity').value;
+
+      showToast(`Corridor ${origin} ➔ ${dest} with ${waypointStops.length} stops is published and open for bookings!`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('routeToast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
